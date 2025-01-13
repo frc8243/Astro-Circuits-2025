@@ -95,7 +95,8 @@ public class coralHandler extends SubsystemBase {
 
     leftPidController = leftSparkMax.getClosedLoopController();
     rightPidController = rightSparkMax.getClosedLoopController();
-
+    
+    
     
   }
 
@@ -115,7 +116,7 @@ public class coralHandler extends SubsystemBase {
     }
     else{
       System.out.println("PVC not visible");
-    }
+    } 
   }
   public void setIntakeMotors (double speed){
     if(!hasCoral){

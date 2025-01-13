@@ -78,6 +78,7 @@ public final class Constants {
 
   public static final class OIConstants {
     public static final int kDriverControllerPort = 0;
+    public static final int kOperatorControllerPort = 1;
     public static final double kDriveDeadband = 0.05;
   }
 
@@ -98,5 +99,28 @@ public final class Constants {
 
   public static final class NeoMotorConstants {
     public static final double kFreeSpeedRpm = 5676;
+  }
+
+  public static final class Elevator{
+    public static final double kP = 0.01;
+    public static final double kI = 0;
+    public static final double kD = 0;
+    public static final double kG = 0;
+    public static final double kIZone = 5.0;
+    public static final double kMaxVelocity = 10; //TODO: FIND WHAT THIS IS
+    public static final double kMaxAcceleration = 20; //TODO: FIND WHAT THIS IS
+
+    public static final double kStowHeight = 0;
+    public static final double kL2Height = 9;
+    public static final double kL3Height = 25.14;
+    public static final double kL4Height = 52;
+    public static final double kMaxHeight = 56.2;
+    public static final double kLowAlgaeHeight = 24.8;
+    public static final double kHighAlgaeHeight = 42.5;
+    
+
+
+
+
   }
 }

@@ -20,6 +20,7 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.coral.coralHandler;
+import frc.robot.subsystems.elevator.elevator;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
@@ -37,9 +38,11 @@ public class RobotContainer {
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   private final coralHandler m_coralHandler = new coralHandler();
+  private final elevator m_elevator = new elevator();
 
   // The driver's controller
-  CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
+  CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);// port 0
+  CommandXboxController m_operatorController = new CommandXboxController(OIConstants.kOperatorControllerPort);// port 1
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -78,6 +81,8 @@ public class RobotContainer {
 
     m_driverController.a().whileTrue(m_coralHandler.coralIntake(0.2));
     m_driverController.b().whileTrue(m_coralHandler.coralOutake(0.2));
+
+    m_driverController.x().whileTrue(m_elevator.goToLiftL2());
   }
 
   /**
