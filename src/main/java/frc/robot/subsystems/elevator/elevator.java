@@ -86,8 +86,8 @@ public class elevator extends SubsystemBase {
         .pid(rightP, rightI, rightD).outputRange(rightMinOutput, rightMaxOutput);
   
   
-    leftSparkMax = new SparkMax(0, MotorType.kBrushless);  
-    rightSparkMax = new SparkMax(1,  MotorType.kBrushless);
+    leftSparkMax = new SparkMax(16, MotorType.kBrushless);  
+    rightSparkMax = new SparkMax(29,  MotorType.kBrushless);
     leftSparkMax.configure(sparkMaxConfigLeft, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     rightSparkMax.configure(sparkMaxConfigLeft, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     leftRelativeEncoder = leftSparkMax.getEncoder();

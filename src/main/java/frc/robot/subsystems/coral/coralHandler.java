@@ -83,8 +83,8 @@ public class coralHandler extends SubsystemBase {
       sparkMaxConfigRight.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
         .pid(rightP, rightI, rightD).outputRange(rightMinOutput, rightMaxOutput);
 
-    leftSparkMax = new SparkMax(0, MotorType.kBrushless);  
-    rightSparkMax = new SparkMax(1,  MotorType.kBrushless);
+    leftSparkMax = new SparkMax(34, MotorType.kBrushless);  
+    rightSparkMax = new SparkMax(45,  MotorType.kBrushless);
 
 
     leftSparkMax.configure(sparkMaxConfigLeft, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);

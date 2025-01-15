@@ -14,19 +14,23 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
+import frc.robot.commands.TurnToTarget;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.coral.coralHandler;
 import frc.robot.subsystems.elevator.elevator;
+import frc.robot.subsystems.vision.vision;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import java.util.List;
+
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -35,10 +39,12 @@ import java.util.List;
  * (including subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+  //private final SendableChooser<Command> autoChooser;
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   private final coralHandler m_coralHandler = new coralHandler();
   private final elevator m_elevator = new elevator();
+  private final vision m_vision = new vision(m_robotDrive);
 
   // The driver's controller
   CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);// port 0
@@ -50,6 +56,8 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
+
+    //autoChooser = AutoBuilder.buildAutoChooser();
 
     // Configure default commands
     m_robotDrive.setDefaultCommand(
@@ -83,6 +91,10 @@ public class RobotContainer {
     m_driverController.b().whileTrue(m_coralHandler.coralOutake(0.2));
 
     m_driverController.x().whileTrue(m_elevator.goToLiftL2());
+
+    m_driverController.rightBumper().whileTrue(new TurnToTarget(m_robotDrive, m_vision));
+
+
   }
 
   /**
