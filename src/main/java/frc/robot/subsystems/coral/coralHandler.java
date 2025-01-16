@@ -165,7 +165,7 @@ public class coralHandler extends SubsystemBase {
 
   public Command coralIntake (double velocity){
     return this.run(
-      ()->{pidSetIntakeMotors(velocity); 
+      ()->{setIntakeMotors(velocity); 
         System.out.println("Coral Intaking");}
     );
   }

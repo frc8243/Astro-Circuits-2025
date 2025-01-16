@@ -72,6 +72,11 @@ public class RobotContainer {
                 -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
                 true),
             m_robotDrive));
+
+    m_coralHandler.setDefaultCommand(
+      new RunCommand(
+          () -> m_coralHandler.stopMotors()
+          , m_coralHandler));
   }
 
   /**
@@ -89,7 +94,7 @@ public class RobotContainer {
             () -> m_robotDrive.setX(),
             m_robotDrive));
 
-    m_operatorController.x().whileTrue(m_coralHandler.coralIntake(0.2));
+    m_operatorController.x().whileTrue(m_coralHandler.coralIntake(-0.5));
     m_operatorController.y().whileTrue(m_coralHandler.coralOutake(0.2));
     m_operatorController.a().whileTrue(m_AlgaeSubsystem.AlgaeIntake(0.2));
     m_operatorController.b().whileTrue(m_AlgaeSubsystem.AlgaeOutake(0.2));
