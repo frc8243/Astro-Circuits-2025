@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.subsystems.coral;
 
 import edu.wpi.first.wpilibj.I2C;
@@ -38,10 +34,10 @@ public class coralHandler extends SubsystemBase {
   private static final boolean leftEncoderInverted = true;
   private static final boolean rightEncoderInverted = false;
 
-  private static final double leftEncoderPositionFactor = 0.0;
-  private static final double rightEncoderPositionFactor = 0.0;
+  private static final double leftEncoderPositionFactor = 1.0;
+  private static final double rightEncoderPositionFactor = 1.0;
 
-  private static final double leftP = 0.01;
+  private static final double leftP = 0.095;
   private static final double leftI = 0;
   private static final double leftD = 0;
   //private static final double LeftFF = 1 / ;
@@ -69,21 +65,22 @@ public class coralHandler extends SubsystemBase {
 
   /** Creates a new coral. */
   public coralHandler() {
+    leftSparkMax = new SparkMax(52, MotorType.kBrushless); 
  
 
-    sparkMaxConfigLeft.inverted(leftEncoderInverted).idleMode(leftMotorIdleMode);
-    sparkMaxConfigLeft.encoder.positionConversionFactor(leftEncoderPositionFactor)
-      .velocityConversionFactor(leftEncoderPositionFactor);
-    sparkMaxConfigLeft.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-      .pid(leftP, leftI, leftD).outputRange(leftMinOutput, leftMaxOutput);
+     sparkMaxConfigLeft.inverted(leftEncoderInverted).idleMode(leftMotorIdleMode);
+     sparkMaxConfigLeft.encoder.positionConversionFactor(leftEncoderPositionFactor)
+       .velocityConversionFactor(leftEncoderPositionFactor/60);
+     sparkMaxConfigLeft.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+       .pid(leftP, leftI, leftD, ClosedLoopSlot.kSlot1).outputRange(leftMinOutput, leftMaxOutput);
 
       sparkMaxConfigRight.inverted(rightEncoderInverted).idleMode(rightMotorIdleMode);
       sparkMaxConfigRight.encoder.positionConversionFactor(rightEncoderPositionFactor)
-        .velocityConversionFactor(rightEncoderPositionFactor);
+        .velocityConversionFactor(rightEncoderPositionFactor/60);
       sparkMaxConfigRight.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-        .pid(rightP, rightI, rightD).outputRange(rightMinOutput, rightMaxOutput);
+        .pid(rightP, rightI, rightD, ClosedLoopSlot.kSlot1).outputRange(rightMinOutput, rightMaxOutput);
 
-    leftSparkMax = new SparkMax(34, MotorType.kBrushless);  
+     
     rightSparkMax = new SparkMax(45,  MotorType.kBrushless);
 
 
@@ -112,38 +109,38 @@ public class coralHandler extends SubsystemBase {
     // Proximity value was ~200 when PVC pipe was 2 inches away
     // Proximity value was ~60-70 when nothing was in front of the sensor
     if (proximity > 100){
-      System.out.println("PVC visible");
+      //System.out.println("PVC visible");
     }
     else{
-      System.out.println("PVC not visible");
+      //System.out.println("PVC not visible");
     } 
   }
   public void setIntakeMotors (double speed){
     if(!hasCoral){
       leftSparkMax.set(speed);
-      rightSparkMax.set(speed);
+      //rightSparkMax.set(speed);
     }
     
   }
   public void pidSetIntakeMotors (double targetVelocity){
-    if(!hasCoral){
+    //if(!hasCoral){
       leftPidController.setReference(targetVelocity, ControlType.kVelocity, ClosedLoopSlot.kSlot1);
-      rightPidController.setReference(targetVelocity, ControlType.kVelocity, ClosedLoopSlot.kSlot1);
-    }
+      //rightPidController.setReference(targetVelocity, ControlType.kVelocity, ClosedLoopSlot.kSlot1);
+    //}
     
   }
 
   public void setOutakeMotors (double speed){
-    if(hasCoral){
+    //if(hasCoral){
       leftSparkMax.set(speed);
-      rightSparkMax.set(speed);
-    }
+      //rightSparkMax.set(speed);
+    //}
     
   }
 
   public void stopMotors(){
     leftSparkMax.set(0);
-    rightSparkMax.set(0);
+   // rightSparkMax.set(0);
   }
 
   // private int getRed(){
@@ -167,18 +164,16 @@ public class coralHandler extends SubsystemBase {
   // }
 
   public Command coralIntake (double velocity){
-    return this.startEnd(
+    return this.run(
       ()->{pidSetIntakeMotors(velocity); 
-        System.out.println("Coral Intaking");},
-      ()-> stopMotors()
+        System.out.println("Coral Intaking");}
     );
   }
 
     public Command coralOutake (double speed){
-      return this.startEnd(
+      return this.run(
         ()->{setOutakeMotors(speed); 
-          System.out.println("Coral Outaking");},
-        ()-> stopMotors()
+          System.out.println("Coral Outaking");}
       );
   }
 
