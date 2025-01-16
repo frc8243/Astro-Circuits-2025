@@ -21,6 +21,7 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.TurnToTarget;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.Algae.AlgaeSubsystem;
 import frc.robot.subsystems.coral.coralHandler;
 import frc.robot.subsystems.elevator.elevator;
 import frc.robot.subsystems.vision.vision;
@@ -45,6 +46,7 @@ public class RobotContainer {
   private final coralHandler m_coralHandler = new coralHandler();
   private final elevator m_elevator = new elevator();
   private final vision m_vision = new vision(m_robotDrive);
+  private final AlgaeSubsystem m_AlgaeSubsystem = new AlgaeSubsystem();
 
   // The driver's controller
   CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);// port 0
@@ -87,13 +89,18 @@ public class RobotContainer {
             () -> m_robotDrive.setX(),
             m_robotDrive));
 
-    m_driverController.a().whileTrue(m_coralHandler.coralIntake(0.2));
-    m_driverController.b().whileTrue(m_coralHandler.coralOutake(0.2));
-
-    m_driverController.x().whileTrue(m_elevator.goToLiftL2());
+    m_operatorController.x().whileTrue(m_coralHandler.coralIntake(0.2));
+    m_operatorController.y().whileTrue(m_coralHandler.coralOutake(0.2));
+    m_operatorController.a().whileTrue(m_AlgaeSubsystem.AlgaeIntake(0.2));
+    m_operatorController.b().whileTrue(m_AlgaeSubsystem.AlgaeOutake(0.2));
+    m_operatorController.povDownLeft().whileTrue(m_elevator.goToLiftL2Command());
+    m_operatorController.povDownRight().whileTrue(m_elevator.goToLiftL3Command());
+    m_operatorController.povDown().whileTrue(m_elevator.goToLiftStowCommand());
+    m_operatorController.povUp().whileTrue(m_elevator.goToLiftL4Command());
+    //m_operatorController.rightBumper().whileTrue
+    //m_operatorController.leftBumper().whileTrue
 
     m_driverController.rightBumper().whileTrue(new TurnToTarget(m_robotDrive, m_vision));
-
 
   }
 

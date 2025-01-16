@@ -198,6 +198,13 @@ public class elevator extends SubsystemBase {
     mPeriodicIO.elevator_target = Constants.Elevator.kStowHeight;
     mPeriodicIO.state = ElevatorState.STOW;
   }
+  public Command goToLiftStowCommand (){
+    return this.startEnd(
+      ()->{goToElevatorStow();; 
+        System.out.println("Elevate to Stow");},
+      ()-> stop()
+    );
+  }
 
   public void goToElevatorL2() {
     mPeriodicIO.is_elevator_pos_control = true;
@@ -205,7 +212,7 @@ public class elevator extends SubsystemBase {
     mPeriodicIO.state = ElevatorState.L2;
   }
 
-  public Command goToLiftL2 (){
+  public Command goToLiftL2Command (){ 
     return this.startEnd(
       ()->{goToElevatorL2();; 
         System.out.println("Elevate to L2");},
@@ -218,13 +225,25 @@ public class elevator extends SubsystemBase {
     mPeriodicIO.elevator_target = Constants.Elevator.kL3Height;
     mPeriodicIO.state = ElevatorState.L3;
   }
-
+  public Command goToLiftL3Command (){
+    return this.startEnd(
+      ()->{goToElevatorL3();; 
+        System.out.println("Elevate to L3");},
+      ()-> stop()
+    );
+  }
   public void goToElevatorL4() {
     mPeriodicIO.is_elevator_pos_control = true;
     mPeriodicIO.elevator_target = Constants.Elevator.kL4Height;
     mPeriodicIO.state = ElevatorState.L4;
   }
-
+  public Command goToLiftL4Command (){
+    return this.startEnd(
+      ()->{goToElevatorL4();
+        System.out.println("Elevate to L4");},
+      ()-> stop()
+    );
+  }
   public void goToAlgaeLow() {
     mPeriodicIO.is_elevator_pos_control = true;
     mPeriodicIO.elevator_target = Constants.Elevator.kLowAlgaeHeight;
