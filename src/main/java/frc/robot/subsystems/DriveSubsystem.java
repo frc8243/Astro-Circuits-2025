@@ -5,6 +5,11 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.controllers.PathFollowingController;
 import com.revrobotics.ColorSensorV3;
 
 import edu.wpi.first.hal.FRCNetComm.tInstances;
@@ -19,9 +24,13 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.I2C;
 import frc.robot.Constants.DriveConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+//import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 
 public class DriveSubsystem extends SubsystemBase {
   // Create MAXSwerveModules
@@ -59,8 +68,44 @@ public class DriveSubsystem extends SubsystemBase {
           m_rearRight.getPosition()
       });
 
+      public ChassisSpeeds getRobotRelativeSpeeds(){
+        return DriveConstants.kDriveKinematics.toChassisSpeeds(m_frontLeft.getState(),m_frontRight.getState(), m_rearLeft.getState(), m_rearRight.getState());
+      }
+      public void driveRobotRelative(ChassisSpeeds speeds){
+        this.drive(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond, false);
+      }
+
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
+
+        RobotConfig config = null;
+
+        try{
+          config = RobotConfig.fromGUISettings();
+        } catch (Exception e){
+          e.printStackTrace();
+        }
+        AutoBuilder.configure(
+        this::getPose, // Robot pose supplier
+        this::resetOdometry, // Method to reset odometry (will be called if your auto has a starting pose)
+        this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+        (speeds, feedforwards) -> driveRobotRelative(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
+        new PPHolonomicDriveController( // HolonomicPathFollowerConfig, this should likely live in your Constants class
+            new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+            new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
+
+        ),
+        config,
+        () -> {
+          var alliance = DriverStation.getAlliance();
+          if (alliance.isPresent()){
+            return alliance.get() == DriverStation.Alliance.Red;
+          }
+          return false;
+        },
+        this// Reference to this subsystem to set requirements
+    );
+      
     // Usage reporting for MAXSwerve template
     HAL.report(tResourceType.kResourceType_RobotDrive, tInstances.kRobotDriveSwerve_MaxSwerve);
   }

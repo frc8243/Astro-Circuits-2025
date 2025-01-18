@@ -15,6 +15,7 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
@@ -32,6 +33,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import java.util.List;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -40,13 +43,13 @@ import java.util.List;
  * (including subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  //private final SendableChooser<Command> autoChooser;
+  private SendableChooser<Command> autoChooser;
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
-  private final coralHandler m_coralHandler = new coralHandler();
-  private final elevator m_elevator = new elevator();
+  //private final coralHandler m_coralHandler = new coralHandler();
+  //private final elevator m_elevator = new elevator();
   private final vision m_vision = new vision(m_robotDrive);
-  private final AlgaeSubsystem m_AlgaeSubsystem = new AlgaeSubsystem();
+  //private final AlgaeSubsystem m_AlgaeSubsystem = new AlgaeSubsystem();
 
   // The driver's controller
   CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);// port 0
@@ -59,7 +62,47 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
 
-    //autoChooser = AutoBuilder.buildAutoChooser();
+    TrajectoryConfig config = new TrajectoryConfig(
+      AutoConstants.kMaxSpeedMetersPerSecond,
+      AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+      // Add kinematics to ensure max speed is actually obeyed
+      .setKinematics(DriveConstants.kDriveKinematics);
+
+  // An example trajectory to follow. All units in meters.
+  Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
+      // Start at the origin facing the +X direction
+      new Pose2d(0, 0, new Rotation2d(0)),
+      // Pass through these two interior waypoints, making an 's' curve path
+      List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
+      // End 3 meters straight ahead of where we started, facing forward
+      new Pose2d(3, 0, new Rotation2d(0)),
+      config);
+
+  var thetaController = new ProfiledPIDController(
+      AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
+  thetaController.enableContinuousInput(-Math.PI, Math.PI);
+
+  SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
+      exampleTrajectory,
+      m_robotDrive::getPose, // Functional interface to feed supplier
+      DriveConstants.kDriveKinematics,
+
+      // Position controllers
+      new PIDController(AutoConstants.kPXController, 0, 0),
+      new PIDController(AutoConstants.kPYController, 0, 0),
+      thetaController,
+      m_robotDrive::setModuleStates,
+      m_robotDrive);
+
+  // Reset odometry to the starting pose of the trajectory.
+  m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
+
+    
+
+    autoChooser = AutoBuilder.buildAutoChooser();
+    SmartDashboard.putData("Auto Chooser", autoChooser);
+
+    
 
     // Configure default commands
     m_robotDrive.setDefaultCommand(
@@ -73,10 +116,10 @@ public class RobotContainer {
                 true),
             m_robotDrive));
 
-    m_coralHandler.setDefaultCommand(
-      new RunCommand(
-          () -> m_coralHandler.stopMotors()
-          , m_coralHandler));
+    // m_coralHandler.setDefaultCommand(
+    //   new RunCommand(
+    //       () -> m_coralHandler.stopMotors()
+    //       , m_coralHandler));
   }
 
   /**
@@ -94,14 +137,14 @@ public class RobotContainer {
             () -> m_robotDrive.setX(),
             m_robotDrive));
 
-    m_operatorController.x().whileTrue(m_coralHandler.coralIntake(-0.5));
-    m_operatorController.y().whileTrue(m_coralHandler.coralOutake(0.2));
-    m_operatorController.a().whileTrue(m_AlgaeSubsystem.AlgaeIntake(0.2));
-    m_operatorController.b().whileTrue(m_AlgaeSubsystem.AlgaeOutake(0.2));
-    m_operatorController.povDownLeft().whileTrue(m_elevator.goToLiftL2Command());
-    m_operatorController.povDownRight().whileTrue(m_elevator.goToLiftL3Command());
-    m_operatorController.povDown().whileTrue(m_elevator.goToLiftStowCommand());
-    m_operatorController.povUp().whileTrue(m_elevator.goToLiftL4Command());
+    // m_operatorController.x().whileTrue(m_coralHandler.coralIntake(-0.5));
+    // m_operatorController.y().whileTrue(m_coralHandler.coralOutake(0.2));
+    // m_operatorController.a().whileTrue(m_AlgaeSubsystem.AlgaeIntake(0.2));
+    // m_operatorController.b().whileTrue(m_AlgaeSubsystem.AlgaeOutake(0.2));
+    // m_operatorController.povDownLeft().whileTrue(m_elevator.goToLiftL2Command());
+    // m_operatorController.povDownRight().whileTrue(m_elevator.goToLiftL3Command());
+    // m_operatorController.povDown().whileTrue(m_elevator.goToLiftStowCommand());
+    // m_operatorController.povUp().whileTrue(m_elevator.goToLiftL4Command());
     //m_operatorController.rightBumper().whileTrue
     //m_operatorController.leftBumper().whileTrue
 
@@ -116,42 +159,10 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // Create config for trajectory
-    TrajectoryConfig config = new TrajectoryConfig(
-        AutoConstants.kMaxSpeedMetersPerSecond,
-        AutoConstants.kMaxAccelerationMetersPerSecondSquared)
-        // Add kinematics to ensure max speed is actually obeyed
-        .setKinematics(DriveConstants.kDriveKinematics);
 
-    // An example trajectory to follow. All units in meters.
-    Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
-        // Start at the origin facing the +X direction
-        new Pose2d(0, 0, new Rotation2d(0)),
-        // Pass through these two interior waypoints, making an 's' curve path
-        List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
-        // End 3 meters straight ahead of where we started, facing forward
-        new Pose2d(3, 0, new Rotation2d(0)),
-        config);
-
-    var thetaController = new ProfiledPIDController(
-        AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
-    thetaController.enableContinuousInput(-Math.PI, Math.PI);
-
-    SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-        exampleTrajectory,
-        m_robotDrive::getPose, // Functional interface to feed supplier
-        DriveConstants.kDriveKinematics,
-
-        // Position controllers
-        new PIDController(AutoConstants.kPXController, 0, 0),
-        new PIDController(AutoConstants.kPYController, 0, 0),
-        thetaController,
-        m_robotDrive::setModuleStates,
-        m_robotDrive);
-
-    // Reset odometry to the starting pose of the trajectory.
-    m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
 
     // Run path following command, then stop at the end.
-    return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
+
+    return autoChooser.getSelected();
   }
 }
