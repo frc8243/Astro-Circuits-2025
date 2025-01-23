@@ -137,9 +137,16 @@ public class coralHandler extends SubsystemBase {
   public void setOutakeMotors (double speed){
     //if(hasCoral){
       leftSparkMax.set(speed);
-      //rightSparkMax.set(speed);
+      rightSparkMax.set(speed);
     //}
     
+  }
+  public void setOutakeBaseMotor (double speed){
+    //if(hasCoral){
+      leftSparkMax.set(speed);
+      rightSparkMax.set(speed/2);
+    //}
+
   }
 
   public void stopMotors(){
@@ -180,6 +187,11 @@ public class coralHandler extends SubsystemBase {
           System.out.println("Coral Outaking");}
       );
   }
-
+  public Command coralBaseOutake (double speed){
+      return this.run(
+        ()->{setOutakeMotors(speed);
+        System.out.println("Coral Outaking at Base");}
+      );
+  }
 
 }
