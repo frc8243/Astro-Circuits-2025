@@ -1,10 +1,12 @@
 package frc.robot.subsystems.coral;
 
 import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotContainer;
 import frc.robot.Constants.NeoMotorConstants;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -109,10 +111,12 @@ public class coralHandler extends SubsystemBase {
     // Proximity value was ~200 when PVC pipe was 2 inches away
     // Proximity value was ~60-70 when nothing was in front of the sensor
     if (proximity > 100){
+    RobotContainer.m_operatorController.setRumble(GenericHID.RumbleType.kLeftRumble, 0.7);  
       //System.out.println("PVC visible");
     }
     else{
-      //System.out.println("PVC not visible");
+      RobotContainer.m_operatorController.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
+      System.out.println("PVC not visible");
     } 
   }
   public void setIntakeMotors (double speed){

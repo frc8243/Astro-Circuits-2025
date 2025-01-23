@@ -16,6 +16,7 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
@@ -32,6 +33,7 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import java.util.List;
+import au.grapplerobotics.CanBridge;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 
@@ -52,16 +54,17 @@ public class RobotContainer {
   //private final AlgaeSubsystem m_AlgaeSubsystem = new AlgaeSubsystem();
 
   // The driver's controller
-  CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);// port 0
-  CommandXboxController m_operatorController = new CommandXboxController(OIConstants.kOperatorControllerPort);// port 1
+ public static CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);// port 0
+ public static CommandXboxController m_operatorController = new CommandXboxController(OIConstants.kOperatorControllerPort);// port 1
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
     // Configure the button bindings
+    CanBridge.runTCP();
     configureButtonBindings();
-
+    RobotContainer.m_operatorController.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
     TrajectoryConfig config = new TrajectoryConfig(
       AutoConstants.kMaxSpeedMetersPerSecond,
       AutoConstants.kMaxAccelerationMetersPerSecondSquared)
@@ -147,7 +150,8 @@ public class RobotContainer {
     // m_operatorController.povUp().whileTrue(m_elevator.goToLiftL4Command());
     //m_operatorController.rightBumper().whileTrue
     //m_operatorController.leftBumper().whileTrue
-
+//public void setRumble(GenericHID.RumbleType leftRumble,
+//double 0.9 );
     m_driverController.rightBumper().whileTrue(new TurnToTarget(m_robotDrive, m_vision));
 
   }
