@@ -47,10 +47,10 @@ import com.pathplanner.lib.auto.AutoBuilder;
 public class RobotContainer {
   private SendableChooser<Command> autoChooser;
   // The robot's subsystems
-  private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  //private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   //private final coralHandler m_coralHandler = new coralHandler();
-  //private final elevator m_elevator = new elevator();
-  private final vision m_vision = new vision(m_robotDrive);
+  public final elevator m_elevator = new elevator();
+  //private final vision m_vision = new vision(m_robotDrive);
   //private final AlgaeSubsystem m_AlgaeSubsystem = new AlgaeSubsystem();
 
   // The driver's controller
@@ -85,44 +85,44 @@ public class RobotContainer {
       AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
   thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-  SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-      exampleTrajectory,
-      m_robotDrive::getPose, // Functional interface to feed supplier
-      DriveConstants.kDriveKinematics,
+  // SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
+  //     exampleTrajectory,
+  //     m_robotDrive::getPose, // Functional interface to feed supplier
+  //     DriveConstants.kDriveKinematics,
 
-      // Position controllers
-      new PIDController(AutoConstants.kPXController, 0, 0),
-      new PIDController(AutoConstants.kPYController, 0, 0),
-      thetaController,
-      m_robotDrive::setModuleStates,
-      m_robotDrive);
+  //     // Position controllers
+  //     new PIDController(AutoConstants.kPXController, 0, 0),
+  //     new PIDController(AutoConstants.kPYController, 0, 0),
+  //     thetaController,
+  //     m_robotDrive::setModuleStates,
+  //     m_robotDrive);
 
-  // Reset odometry to the starting pose of the trajectory.
-  m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
-
-    
-
-    autoChooser = AutoBuilder.buildAutoChooser();
-    SmartDashboard.putData("Auto Chooser", autoChooser);
+  // // Reset odometry to the starting pose of the trajectory.
+  // m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
 
     
 
-    // Configure default commands
-    m_robotDrive.setDefaultCommand(
-        // The left stick controls translation of the robot.
-        // Turning is controlled by the X axis of the right stick.
-        new RunCommand(
-            () -> m_robotDrive.drive(
-                -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
-                -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
-                -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
-                true),
-            m_robotDrive));
+  //   autoChooser = AutoBuilder.buildAutoChooser();
+  //   SmartDashboard.putData("Auto Chooser", autoChooser);
 
-    // m_coralHandler.setDefaultCommand(
-    //   new RunCommand(
-    //       () -> m_coralHandler.stopMotors()
-    //       , m_coralHandler));
+    
+
+  //   // Configure default commands
+  //   m_robotDrive.setDefaultCommand(
+  //       // The left stick controls translation of the robot.
+  //       // Turning is controlled by the X axis of the right stick.
+  //       new RunCommand(
+  //           () -> m_robotDrive.drive(
+  //               -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
+  //               -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
+  //               -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
+  //               true),
+  //           m_robotDrive));
+
+    //  m_coralHandler.setDefaultCommand(
+    //    new RunCommand(
+    //        () -> m_coralHandler.stopMotors()
+    //        , m_coralHandler));
   }
 
   /**
@@ -135,24 +135,28 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
-    m_driverController.rightBumper()
-        .whileTrue(new RunCommand(
-            () -> m_robotDrive.setX(),
-            m_robotDrive));
+    // m_driverController.rightBumper()
+    //     .whileTrue(new RunCommand(
+    //         () -> m_robotDrive.setX(),
+    //         m_robotDrive));
 
     // m_operatorController.x().whileTrue(m_coralHandler.coralIntake(-0.5));
-    // m_operatorController.y().whileTrue(m_coralHandler.coralOutake(0.2));
+    // m_operatorController.y().whileTrue(m_coralHandler.coralOutake(0.4));
     // m_operatorController.a().whileTrue(m_AlgaeSubsystem.AlgaeIntake(0.2));
     // m_operatorController.b().whileTrue(m_AlgaeSubsystem.AlgaeOutake(0.2));
-    // m_operatorController.povDownLeft().whileTrue(m_elevator.goToLiftL2Command());
-    // m_operatorController.povDownRight().whileTrue(m_elevator.goToLiftL3Command());
-    // m_operatorController.povDown().whileTrue(m_elevator.goToLiftStowCommand());
-    // m_operatorController.povUp().whileTrue(m_elevator.goToLiftL4Command());
+    //  m_operatorController.povDownLeft().whileTrue(m_elevator.goToLiftL2Command());
+    //  m_operatorController.povDownRight().whileTrue(m_elevator.goToLiftL3Command());
+    //  m_operatorController.povDown().whileTrue(m_elevator.goToLiftStowCommand());
+    //  m_operatorController.povUp().whileTrue(m_elevator.goToLiftL4Command());
+    m_operatorController.a().onTrue(m_elevator.goToLiftL2Command());
+    m_operatorController.b().onTrue(m_elevator.goToLiftStowCommand());
+    m_operatorController.x().onTrue(m_elevator.goToLiftL3Command());
+    m_operatorController.y().onTrue(m_elevator.goToLiftL4Command());
     //m_operatorController.rightBumper().whileTrue
     //m_operatorController.leftBumper().whileTrue
 //public void setRumble(GenericHID.RumbleType leftRumble,
 //double 0.9 );
-    m_driverController.rightBumper().whileTrue(new TurnToTarget(m_robotDrive, m_vision));
+   // m_driverController.rightBumper().whileTrue(new TurnToTarget(m_robotDrive, m_vision));
 
   }
 

@@ -7,6 +7,7 @@ package frc.robot.subsystems.elevator;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkClosedLoopController.ArbFFUnits;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -27,7 +28,7 @@ import frc.robot.Constants;
 public class elevator extends SubsystemBase {
   /** Creates a new elevator. */
 
-  private PeriodicIO mPeriodicIO;
+  private PeriodicIO m_PeriodicIO;
   
   private final SparkMax leftSparkMax;
   private final SparkMax rightSparkMax;
@@ -46,25 +47,25 @@ public class elevator extends SubsystemBase {
   private static final SparkMaxConfig sparkMaxConfigLeft = new SparkMaxConfig();
   private static final SparkMaxConfig sparkMaxConfigRight = new SparkMaxConfig();
 
-  private static final boolean leftEncoderInverted = true;
-  private static final boolean rightEncoderInverted = false;
+  private static final boolean leftEncoderInverted = false;
+  private static final boolean rightEncoderInverted = true;
 
-  private static final double leftEncoderPositionFactor = 0.0;
-  private static final double rightEncoderPositionFactor = 0.0;
+  private static final double leftEncoderPositionFactor = 1.12;
+  private static final double rightEncoderPositionFactor = 1.12;
 
-  private static final double leftP = 0.01;
+  private static final double leftP = 0.1;
   private static final double leftI = 0;
   private static final double leftD = 0;
   //private static final double LeftFF = 1 / ;
-  private static final double leftMinOutput = -1;
-  private static final double leftMaxOutput = 1;
+  private static final double leftMinOutput = -.5;
+  private static final double leftMaxOutput = .5;
 
-  private static final double rightP = 0.01;
+  private static final double rightP = 0.1;
   private static final double rightI = 0;
   private static final double rightD = 0.001;
   //private static final double rightFF = 1.0;
-  private static final double rightMinOutput = -1;
-  private static final double rightMaxOutput = 1;
+  private static final double rightMinOutput = -.5;
+  private static final double rightMaxOutput = .5;
 
   private static final SparkMaxConfig.IdleMode leftMotorIdleMode = SparkBaseConfig.IdleMode.kBrake;
   private static final SparkMaxConfig.IdleMode rightMotorIdleMode = SparkBaseConfig.IdleMode.kBrake;
@@ -72,24 +73,26 @@ public class elevator extends SubsystemBase {
   
   
     public elevator() {
+      m_PeriodicIO = new PeriodicIO();
+      leftSparkMax = new SparkMax(8, MotorType.kBrushless);  
+      rightSparkMax = new SparkMax(7,  MotorType.kBrushless);
 
       sparkMaxConfigLeft.inverted(leftEncoderInverted).idleMode(leftMotorIdleMode);
       sparkMaxConfigLeft.encoder.positionConversionFactor(leftEncoderPositionFactor)
-        .velocityConversionFactor(leftEncoderPositionFactor);
+        .velocityConversionFactor(leftEncoderPositionFactor/60);
       sparkMaxConfigLeft.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-        .pid(leftP, leftI, leftD).outputRange(leftMinOutput, leftMaxOutput);
+        .pid(leftP, leftI, leftD, ClosedLoopSlot.kSlot0).outputRange(leftMinOutput, leftMaxOutput);
      
         sparkMaxConfigRight.inverted(rightEncoderInverted).idleMode(rightMotorIdleMode);
       sparkMaxConfigRight.encoder.positionConversionFactor(rightEncoderPositionFactor)
-        .velocityConversionFactor(rightEncoderPositionFactor);
+        .velocityConversionFactor(rightEncoderPositionFactor/60);
       sparkMaxConfigRight.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-        .pid(rightP, rightI, rightD).outputRange(rightMinOutput, rightMaxOutput);
+        .pid(rightP, rightI, rightD, ClosedLoopSlot.kSlot0).outputRange(rightMinOutput, rightMaxOutput);
   
   
-    leftSparkMax = new SparkMax(16, MotorType.kBrushless);  
-    rightSparkMax = new SparkMax(29,  MotorType.kBrushless);
+
     leftSparkMax.configure(sparkMaxConfigLeft, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    rightSparkMax.configure(sparkMaxConfigLeft, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    rightSparkMax.configure(sparkMaxConfigRight, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     leftRelativeEncoder = leftSparkMax.getEncoder();
     rightRelativeEncoder = rightSparkMax.getEncoder();
     leftPidController = leftSparkMax.getClosedLoopController();
@@ -99,7 +102,7 @@ public class elevator extends SubsystemBase {
       new TrapezoidProfile.Constraints(Constants.Elevator.kMaxVelocity, Constants.Elevator.kMaxAcceleration));
 
 
-
+    //goToElevatorStow();
   }
   public enum ElevatorState {
     NONE,
@@ -122,7 +125,12 @@ public class elevator extends SubsystemBase {
    
   @Override
   public void periodic() {
+    SmartDashboard.putNumber("Left Encoder", leftRelativeEncoder.getPosition());
+    SmartDashboard.putNumber("Right Encoder", rightRelativeEncoder.getPosition());
+    outputTelemetry();
+    writePeriodicOutputs();
     // This method will be called once per scheduler run
+
   }
 
 
@@ -130,9 +138,9 @@ public class elevator extends SubsystemBase {
     double curTime = Timer.getFPGATimestamp();
     double dt = curTime - prevUpdateTime;
     prevUpdateTime = curTime;
-    if (mPeriodicIO.is_elevator_pos_control) {
+    if (m_PeriodicIO.is_elevator_pos_control) {
       // Update goal
-      mGoalState.position = mPeriodicIO.elevator_target;
+      mGoalState.position = m_PeriodicIO.elevator_target;
 
       // Calculate new state
       prevUpdateTime = curTime;
@@ -142,39 +150,49 @@ public class elevator extends SubsystemBase {
       leftPidController.setReference(
           mCurState.position,
           SparkMax.ControlType.kPosition,
-          null,//TODO: CHECK THIS
+          ClosedLoopSlot.kSlot0,
            Constants.Elevator.kG,
           ArbFFUnits.kVoltage);
+
+      rightPidController.setReference(
+          mCurState.position,
+          SparkMax.ControlType.kPosition,
+          ClosedLoopSlot.kSlot0,
+           Constants.Elevator.kG,
+          ArbFFUnits.kVoltage);
+
+      
     } else {
       mCurState.position = leftRelativeEncoder.getPosition();
       mCurState.velocity = 0;
-      leftSparkMax.set(mPeriodicIO.elevator_power);
+      leftSparkMax.set(m_PeriodicIO.elevator_power);
+      rightSparkMax.set(m_PeriodicIO.elevator_power);
     }
 
   }
   
   public void stop() {
-    mPeriodicIO.is_elevator_pos_control = false;
-    mPeriodicIO.elevator_power = 0.0;
+    m_PeriodicIO.is_elevator_pos_control = false;
+    m_PeriodicIO.elevator_power = 0.0;
 
     leftSparkMax.set(0.0);
   }
   
   public void outputTelemetry() {
-    SmartDashboard.putNumber("Position/Current", leftRelativeEncoder.getPosition());
-    SmartDashboard.putNumber("Position/Target", mPeriodicIO.elevator_target);
-    SmartDashboard.putNumber("Velocity/Current", leftRelativeEncoder.getVelocity());
+    SmartDashboard.putNumber("Elevator/Position/Current", leftRelativeEncoder.getPosition());
+    SmartDashboard.putNumber("Elevator/Position/Target", m_PeriodicIO.elevator_target);
+    SmartDashboard.putNumber("Elevator/Velocity/Current", leftRelativeEncoder.getVelocity());
 
-    SmartDashboard.putNumber("Position/Setpoint", mCurState.position);
-    SmartDashboard.putNumber("Velocity/Setpoint", mCurState.velocity);
+    SmartDashboard.putNumber("Elevator/Position/Setpoint", mCurState.position);
+    SmartDashboard.putNumber("Elevator/Velocity/Setpoint", mCurState.velocity);
 
-    SmartDashboard.putNumber("Current/Left", leftSparkMax.getOutputCurrent());
-    SmartDashboard.putNumber("Current/Right", rightSparkMax.getOutputCurrent());
+    SmartDashboard.putNumber("Elevator/Current/Left", leftSparkMax.getOutputCurrent());
+    SmartDashboard.putNumber("Elevator/Current/Right", rightSparkMax.getOutputCurrent());
 
-    SmartDashboard.putNumber("Output/Left", leftSparkMax.getAppliedOutput());
-    SmartDashboard.putNumber("Output/Right", rightSparkMax.getAppliedOutput());
+    SmartDashboard.putNumber("Elevator/Output/Left", leftSparkMax.getAppliedOutput());
+    SmartDashboard.putNumber("Elevator/Output/Right", rightSparkMax.getAppliedOutput());
 
-    SmartDashboard.putString("State", ""+mPeriodicIO.state);
+    SmartDashboard.putString("Elevator/State", "" + getState());
   }
 
   
@@ -184,76 +202,73 @@ public class elevator extends SubsystemBase {
 
 
   public ElevatorState getState() {
-    return mPeriodicIO.state;
+    return m_PeriodicIO.state;
   }
 
   public void setElevatorPower(double power) {
     SmartDashboard.putNumber("setElevatorPower", power);
-    mPeriodicIO.is_elevator_pos_control = false;
-    mPeriodicIO.elevator_power = power;
+    m_PeriodicIO.is_elevator_pos_control = false;
+    m_PeriodicIO.elevator_power = power;
   }
 
   public void goToElevatorStow() {
-    mPeriodicIO.is_elevator_pos_control = true;
-    mPeriodicIO.elevator_target = Constants.Elevator.kStowHeight;
-    mPeriodicIO.state = ElevatorState.STOW;
+    m_PeriodicIO.is_elevator_pos_control = true;
+    m_PeriodicIO.elevator_target = Constants.Elevator.kStowHeight;
+    m_PeriodicIO.state = ElevatorState.STOW;
+    System.out.println("Going to Stow");
   }
   public Command goToLiftStowCommand (){
-    return this.startEnd(
-      ()->{goToElevatorStow();; 
-        System.out.println("Elevate to Stow");},
-      ()-> stop()
+    return this.run(
+      ()->{goToElevatorStow(); 
+        System.out.println("Elevate to Stow");}
     );
   }
 
   public void goToElevatorL2() {
-    mPeriodicIO.is_elevator_pos_control = true;
-    mPeriodicIO.elevator_target = Constants.Elevator.kL2Height;
-    mPeriodicIO.state = ElevatorState.L2;
+    m_PeriodicIO.is_elevator_pos_control = true;
+    m_PeriodicIO.elevator_target = Constants.Elevator.kL2Height;
+    m_PeriodicIO.state = ElevatorState.L2;
+    System.out.println("Elevate to L2");
   }
 
   public Command goToLiftL2Command (){ 
-    return this.startEnd(
-      ()->{goToElevatorL2();; 
-        System.out.println("Elevate to L2");},
-      ()-> stop()
+    return this.run(
+      ()->{goToElevatorL2();}
     );
   }
 
   public void goToElevatorL3() {
-    mPeriodicIO.is_elevator_pos_control = true;
-    mPeriodicIO.elevator_target = Constants.Elevator.kL3Height;
-    mPeriodicIO.state = ElevatorState.L3;
+    m_PeriodicIO.is_elevator_pos_control = true;
+    m_PeriodicIO.elevator_target = Constants.Elevator.kL3Height;
+    m_PeriodicIO.state = ElevatorState.L3;
   }
   public Command goToLiftL3Command (){
-    return this.startEnd(
-      ()->{goToElevatorL3();; 
-        System.out.println("Elevate to L3");},
-      ()-> stop()
+    return this.run(
+      ()->{goToElevatorL3(); 
+        System.out.println("Elevate to L3");}
     );
   }
   public void goToElevatorL4() {
-    mPeriodicIO.is_elevator_pos_control = true;
-    mPeriodicIO.elevator_target = Constants.Elevator.kL4Height;
-    mPeriodicIO.state = ElevatorState.L4;
+    m_PeriodicIO.is_elevator_pos_control = true;
+    m_PeriodicIO.elevator_target = Constants.Elevator.kL4Height;
+    m_PeriodicIO.state = ElevatorState.L4;
   }
   public Command goToLiftL4Command (){
-    return this.startEnd(
+    return this.run(
       ()->{goToElevatorL4();
-        System.out.println("Elevate to L4");},
-      ()-> stop()
+        System.out.println("Elevate to L4");}
     );
   }
   public void goToAlgaeLow() {
-    mPeriodicIO.is_elevator_pos_control = true;
-    mPeriodicIO.elevator_target = Constants.Elevator.kLowAlgaeHeight;
-    mPeriodicIO.state = ElevatorState.A1;
+    m_PeriodicIO.is_elevator_pos_control = true;
+    m_PeriodicIO.elevator_target = Constants.Elevator.kLowAlgaeHeight;
+    m_PeriodicIO.state = ElevatorState.A1;
   }
 
   public void goToAlgaeHigh() {
-    mPeriodicIO.is_elevator_pos_control = true;
-    mPeriodicIO.elevator_target = Constants.Elevator.kHighAlgaeHeight;
-    mPeriodicIO.state = ElevatorState.A2;
+    m_PeriodicIO.is_elevator_pos_control = true;
+    m_PeriodicIO.elevator_target = Constants.Elevator.kHighAlgaeHeight;
+    m_PeriodicIO.state = ElevatorState.A2;
   }
 
 

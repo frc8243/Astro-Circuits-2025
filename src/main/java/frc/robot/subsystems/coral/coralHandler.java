@@ -83,7 +83,7 @@ public class coralHandler extends SubsystemBase {
         .pid(rightP, rightI, rightD, ClosedLoopSlot.kSlot1).outputRange(rightMinOutput, rightMaxOutput);
 
      
-    rightSparkMax = new SparkMax(45,  MotorType.kBrushless);
+    rightSparkMax = new SparkMax(51,  MotorType.kBrushless);
 
 
     leftSparkMax.configure(sparkMaxConfigLeft, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);

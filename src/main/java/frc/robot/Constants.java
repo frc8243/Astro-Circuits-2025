@@ -102,12 +102,12 @@ public final class Constants {
   }
 
   public static final class Elevator{
-    public static final double kP = 0.01;
+    public static final double kP = 0.1;
     public static final double kI = 0;
     public static final double kD = 0;
-    public static final double kG = 0;
-    public static final double kIZone = 5.0;
-    public static final double kMaxVelocity = 10; //TODO: FIND WHAT THIS IS
+    public static final double kG = 0.13;
+    public static final double kIZone = 5.0; //TODO: FIND WHAT THIS IS
+    public static final double kMaxVelocity = 10; //Inches per Second 25.47
     public static final double kMaxAcceleration = 20; //TODO: FIND WHAT THIS IS
 
     public static final double kStowHeight = 0;
