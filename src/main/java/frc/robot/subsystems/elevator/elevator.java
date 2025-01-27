@@ -125,8 +125,8 @@ public class elevator extends SubsystemBase {
    
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Left Encoder", leftRelativeEncoder.getPosition());
-    SmartDashboard.putNumber("Right Encoder", rightRelativeEncoder.getPosition());
+    SmartDashboard.putNumber("Elevator/Left Encoder", leftRelativeEncoder.getPosition());
+    SmartDashboard.putNumber("Elevator/Right Encoder", rightRelativeEncoder.getPosition());
     outputTelemetry();
     writePeriodicOutputs();
     // This method will be called once per scheduler run

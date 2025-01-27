@@ -56,6 +56,8 @@ public class RobotContainer {
   // The driver's controller
  public static CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);// port 0
  public static CommandXboxController m_operatorController = new CommandXboxController(OIConstants.kOperatorControllerPort);// port 1
+ private ButtonBinder driverButtonBinder = new ButtonBinder(m_driverController);
+ private ButtonBinder operatorButtonBinder = new ButtonBinder(m_operatorController);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -64,6 +66,9 @@ public class RobotContainer {
     // Configure the button bindings
     CanBridge.runTCP();
     configureButtonBindings();
+    System.out.println(driverButtonBinder.getButtonUsageReport());
+    driverButtonBinder.makeStatusDashboardWidgets("Driver Buttons");
+    operatorButtonBinder.makeStatusDashboardWidgets("Operator Buttons");
     RobotContainer.m_operatorController.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
     TrajectoryConfig config = new TrajectoryConfig(
       AutoConstants.kMaxSpeedMetersPerSecond,
@@ -148,10 +153,14 @@ public class RobotContainer {
     //  m_operatorController.povDownRight().whileTrue(m_elevator.goToLiftL3Command());
     //  m_operatorController.povDown().whileTrue(m_elevator.goToLiftStowCommand());
     //  m_operatorController.povUp().whileTrue(m_elevator.goToLiftL4Command());
-    m_operatorController.a().onTrue(m_elevator.goToLiftL2Command());
-    m_operatorController.b().onTrue(m_elevator.goToLiftStowCommand());
-    m_operatorController.x().onTrue(m_elevator.goToLiftL3Command());
-    m_operatorController.y().onTrue(m_elevator.goToLiftL4Command());
+    //m_operatorController.a().onTrue(m_elevator.goToLiftL2Command());
+    operatorButtonBinder.getButton("a", "Elevator To L2").onTrue(m_elevator.goToLiftL2Command());
+    operatorButtonBinder.getButton("b", "Elevator To Stow").onTrue(m_elevator.goToLiftStowCommand());
+    operatorButtonBinder.getButton("x", "Elevator To L3").onTrue(m_elevator.goToLiftL3Command());
+    operatorButtonBinder.getButton("y", "Elevator To L4").onTrue(m_elevator.goToLiftL4Command());
+    //m_operatorController.b().onTrue(m_elevator.goToLiftStowCommand());
+    //m_operatorController.x().onTrue(m_elevator.goToLiftL3Command());
+    //m_operatorController.y().onTrue(m_elevator.goToLiftL4Command());
     //m_operatorController.rightBumper().whileTrue
     //m_operatorController.leftBumper().whileTrue
 //public void setRumble(GenericHID.RumbleType leftRumble,
