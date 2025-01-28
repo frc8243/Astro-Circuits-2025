@@ -6,18 +6,23 @@ package frc.robot.commands;
 
 import javax.naming.LimitExceededException;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+//import edu.wpi.first.units.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.vision.Vision;
 
-public class TurnToTarget extends Command {
+public class MoveToTarget extends Command {
   private final DriveSubsystem swerveDrive;
   private final Vision limelight;
-  public static final double kP = 0.01;
-  private static final double tolerance = 1.0;
+  public static final double kP = 0.05;
+  private static final double targetDistance = .8; //meters away
+  private static final double aprilTagHeight = 0.15; //Meters tag height
+  private double angleFromGround;
+  private double distance;
   
   /** Creates a new TurnToAprilTag. */
-  public TurnToTarget(DriveSubsystem swerveDrive, Vision limelight) {
+  public MoveToTarget(DriveSubsystem swerveDrive, Vision limelight) {
     this.swerveDrive = swerveDrive;
     this.limelight = limelight;
     addRequirements(swerveDrive);
@@ -31,27 +36,35 @@ public class TurnToTarget extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (limelight.isTargetVisible()){
-      double tx = limelight.getTargetX();
-      double turnSpeed = kP * tx;
+    if (limelight.isTargetVisible() ){
+      angleFromGround = limelight.getTargetY();
+      distance = Math.abs(aprilTagHeight/(Math.tan(Math.toRadians(angleFromGround))));
+      
+        if(distance > targetDistance){
+            System.out.println("MOVING TO APRIL TAG");
+            swerveDrive.drive(0.2,0, 0, false);
+        }
+        else{
+            swerveDrive.drive(0, 0, 0, false);
+        }
 
-      System.out.println("TURNING TO APRIL TAG");
-      swerveDrive.drive(0,0, -turnSpeed, true);
     } else{
       System.out.println("NO TARGET");
-      swerveDrive.drive(0,0,0, true);
+      swerveDrive.drive(0,0,0, false);
     }
+    SmartDashboard.putNumber("targetDistance", distance);
+    SmartDashboard.putNumber("angle", angleFromGround);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    swerveDrive.drive(0, 0, 0, true);
+    swerveDrive.drive(0, 0, 0, false);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;//limelight.isTargetVisible() && Math.abs(limelight.getTargetX()) < tolerance;
+    return false; //limelight.isTargetVisible() && distance < targetDistance;
   }
 }

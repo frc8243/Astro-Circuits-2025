@@ -22,12 +22,13 @@ import edu.wpi.first.wpilibj.PS4Controller.Button;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
+import frc.robot.commands.MoveToTarget;
 import frc.robot.commands.TurnToTarget;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Algae.AlgaeSubsystem;
 import frc.robot.subsystems.coral.coralHandler;
 import frc.robot.subsystems.elevator.elevator;
-import frc.robot.subsystems.vision.vision;
+import frc.robot.subsystems.vision.Vision;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
@@ -49,8 +50,8 @@ public class RobotContainer {
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   //private final coralHandler m_coralHandler = new coralHandler();
-  public final elevator m_elevator = new elevator();
-  private final vision m_vision = new vision(m_robotDrive);
+  //public final elevator m_elevator = new elevator();
+  private final Vision m_vision = new Vision(m_robotDrive);
   //private final AlgaeSubsystem m_AlgaeSubsystem = new AlgaeSubsystem();
 
   // The driver's controller
@@ -153,11 +154,11 @@ public class RobotContainer {
     //  m_operatorController.povDown().whileTrue(m_elevator.goToLiftStowCommand());
     //  m_operatorController.povUp().whileTrue(m_elevator.goToLiftL4Command());
     //m_operatorController.a().onTrue(m_elevator.goToLiftL2Command());
-    operatorButtonBinder.getButton("a", "Elevator To L2").onTrue(m_elevator.goToLiftL2Command());
-    operatorButtonBinder.getButton("b", "Elevator To Stow").onTrue(m_elevator.goToLiftStowCommand());
-    operatorButtonBinder.getButton("x", "Elevator To L3").onTrue(m_elevator.goToLiftL3Command());
-    operatorButtonBinder.getButton("y", "Elevator To L4").onTrue(m_elevator.goToLiftL4Command());
-    //m_operatorController.b().onTrue(m_elevator.goToLiftStowCommand());
+    // operatorButtonBinder.getButton("a", "Elevator To L2").onTrue(m_elevator.goToLiftL2Command());
+    // operatorButtonBinder.getButton("b", "Elevator To Stow").onTrue(m_elevator.goToLiftStowCommand());
+    // operatorButtonBinder.getButton("x", "Elevator To L3").onTrue(m_elevator.goToLiftL3Command());
+    // operatorButtonBinder.getButton("y", "Elevator To L4").onTrue(m_elevator.goToLiftL4Command());
+    // m_operatorController.b().onTrue(m_elevator.goToLiftStowCommand());
     //m_operatorController.x().onTrue(m_elevator.goToLiftL3Command());
     //m_operatorController.y().onTrue(m_elevator.goToLiftL4Command());
     //m_operatorController.rightBumper().whileTrue
@@ -165,6 +166,7 @@ public class RobotContainer {
 //public void setRumble(GenericHID.RumbleType leftRumble,
 //double 0.9 );
     driverButtonBinder.getButton("rightBumper", "Turn To Target").whileTrue(new TurnToTarget(m_robotDrive, m_vision));
+    driverButtonBinder.getButton("leftBumper", "Move To Target").whileTrue(new MoveToTarget(m_robotDrive, m_vision));
     //m_driverController.rightBumper().whileTrue(new TurnToTarget(m_robotDrive, m_vision));
 
   }
