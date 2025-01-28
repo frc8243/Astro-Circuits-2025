@@ -16,6 +16,7 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
 import frc.robot.Constants.AutoConstants;
@@ -33,7 +34,6 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import java.util.List;
-import au.grapplerobotics.CanBridge;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 
@@ -47,10 +47,10 @@ import com.pathplanner.lib.auto.AutoBuilder;
 public class RobotContainer {
   private SendableChooser<Command> autoChooser;
   // The robot's subsystems
-  //private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   //private final coralHandler m_coralHandler = new coralHandler();
   public final elevator m_elevator = new elevator();
-  //private final vision m_vision = new vision(m_robotDrive);
+  private final vision m_vision = new vision(m_robotDrive);
   //private final AlgaeSubsystem m_AlgaeSubsystem = new AlgaeSubsystem();
 
   // The driver's controller
@@ -64,7 +64,6 @@ public class RobotContainer {
    */
   public RobotContainer() {
     // Configure the button bindings
-    CanBridge.runTCP();
     configureButtonBindings();
     System.out.println(driverButtonBinder.getButtonUsageReport());
     driverButtonBinder.makeStatusDashboardWidgets("Driver Buttons");
@@ -90,39 +89,39 @@ public class RobotContainer {
       AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
   thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-  // SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-  //     exampleTrajectory,
-  //     m_robotDrive::getPose, // Functional interface to feed supplier
-  //     DriveConstants.kDriveKinematics,
+  SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
+      exampleTrajectory,
+      m_robotDrive::getPose, // Functional interface to feed supplier
+      DriveConstants.kDriveKinematics,
 
-  //     // Position controllers
-  //     new PIDController(AutoConstants.kPXController, 0, 0),
-  //     new PIDController(AutoConstants.kPYController, 0, 0),
-  //     thetaController,
-  //     m_robotDrive::setModuleStates,
-  //     m_robotDrive);
+      // Position controllers
+      new PIDController(AutoConstants.kPXController, 0, 0),
+      new PIDController(AutoConstants.kPYController, 0, 0),
+      thetaController,
+      m_robotDrive::setModuleStates,
+      m_robotDrive);
 
-  // // Reset odometry to the starting pose of the trajectory.
-  // m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
-
-    
-
-  //   autoChooser = AutoBuilder.buildAutoChooser();
-  //   SmartDashboard.putData("Auto Chooser", autoChooser);
+  // Reset odometry to the starting pose of the trajectory.
+  m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
 
     
 
-  //   // Configure default commands
-  //   m_robotDrive.setDefaultCommand(
-  //       // The left stick controls translation of the robot.
-  //       // Turning is controlled by the X axis of the right stick.
-  //       new RunCommand(
-  //           () -> m_robotDrive.drive(
-  //               -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
-  //               -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
-  //               -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
-  //               true),
-  //           m_robotDrive));
+    autoChooser = AutoBuilder.buildAutoChooser();
+    SmartDashboard.putData("Auto Chooser", autoChooser);
+
+    
+
+    // Configure default commands
+    m_robotDrive.setDefaultCommand(
+        // The left stick controls translation of the robot.
+        // Turning is controlled by the X axis of the right stick.
+        new RunCommand(
+            () -> m_robotDrive.drive(
+                -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
+                -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
+                -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
+                true),
+            m_robotDrive));
 
     //  m_coralHandler.setDefaultCommand(
     //    new RunCommand(
@@ -140,10 +139,10 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
-    // m_driverController.rightBumper()
-    //     .whileTrue(new RunCommand(
-    //         () -> m_robotDrive.setX(),
-    //         m_robotDrive));
+    m_driverController.rightBumper()
+        .whileTrue(new RunCommand(
+            () -> m_robotDrive.setX(),
+            m_robotDrive));
 
     // m_operatorController.x().whileTrue(m_coralHandler.coralIntake(-0.5));
     // m_operatorController.y().whileTrue(m_coralHandler.coralOutake(0.4));
@@ -165,7 +164,8 @@ public class RobotContainer {
     //m_operatorController.leftBumper().whileTrue
 //public void setRumble(GenericHID.RumbleType leftRumble,
 //double 0.9 );
-   // m_driverController.rightBumper().whileTrue(new TurnToTarget(m_robotDrive, m_vision));
+    driverButtonBinder.getButton("rightBumper", "Turn To Target").whileTrue(new TurnToTarget(m_robotDrive, m_vision));
+    //m_driverController.rightBumper().whileTrue(new TurnToTarget(m_robotDrive, m_vision));
 
   }
 
