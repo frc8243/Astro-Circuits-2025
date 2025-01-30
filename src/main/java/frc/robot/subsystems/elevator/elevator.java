@@ -57,8 +57,8 @@ public class elevator extends SubsystemBase {
   private static final double leftI = 0;
   private static final double leftD = 0;
   //private static final double LeftFF = 1 / ;
-  private static final double leftMinOutput = -.5;
-  private static final double leftMaxOutput = .5;
+  private static final double leftMinOutput = -.2;
+  private static final double leftMaxOutput = .2;
 
   private static final double rightP = 0.1;
   private static final double rightI = 0;

@@ -1,5 +1,7 @@
 package frc.robot.subsystems.coral;
 
+import java.lang.module.Configuration;
+
 import com.revrobotics.ColorSensorV3;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.ClosedLoopSlot;
@@ -12,7 +14,10 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
-
+import au.grapplerobotics.CanBridge;
+import au.grapplerobotics.ConfigurationFailedException;
+import au.grapplerobotics.LaserCan;
+import edu.wpi.first.math.trajectory.constraint.RectangularRegionConstraint;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -55,9 +60,11 @@ public class coralHandler extends SubsystemBase {
   private final SparkClosedLoopController leftPidController;
   private final SparkClosedLoopController rightPidController;
 
-  private final ColorSensorV3 colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
+  //private final ColorSensorV3 colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
   private boolean hasCoral = false;
-
+  
+  // private LaserCan firstLaser;
+  // private LaserCan secondLaser;
   /** Creates a new coral. */
   public coralHandler() {
     leftSparkMax = new SparkMax(52, MotorType.kBrushless); 
@@ -88,35 +95,68 @@ public class coralHandler extends SubsystemBase {
     leftPidController = leftSparkMax.getClosedLoopController();
     rightPidController = rightSparkMax.getClosedLoopController();
     
-    
+    // firstLaser=new LaserCan(9);
+    // secondLaser=new LaserCan(10);
+    // try {
+    //   firstLaser.setRangingMode(LaserCan.RangingMode.SHORT);
+    //   firstLaser.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 16 , 16));
+    //   firstLaser.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
+    // } catch (ConfigurationFailedException e) {
+    //   System.out.println("Configuration failed " + e);
+    // }
+    // try{
+    // secondLaser.setRangingMode(LaserCan.RangingMode.SHORT);
+    //   secondLaser.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 16 , 16));
+    //   secondLaser.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
+    // } catch (ConfigurationFailedException e) {
+    //   System.out.println("Configuration failed " + e);
+    // }
     
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+//  LaserCan.Measurement measurement1 = firstLaser.getMeasurement();
+  //LaserCan.Measurement measurement2 = secondLaser.getMeasurement();
 
-    int proximity = colorSensor.getProximity();
+// if ( ( measurement1 !=null && measurement1.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT) && ( measurement2 !=null && measurement2.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT)) {
+//   System.out.println("the target is " + measurement1.distance_mm + "mm away!");
+//   System.out.println("has coral");
+//   hasCoral=true;
+// }
+// else {
+//   System.out.println("no coral");
+//   hasCoral=false;
+// }
+    //int proximity = colorSensor.getProximity();
 
-    System.out.println("Proximity: " + proximity);
+    //System.out.println("Proximity: " + proximity);
     
     // Proximity is higher when the object is closer
     // Proximity value was ~200 when PVC pipe was 2 inches away
     // Proximity value was ~60-70 when nothing was in front of the sensor
-    if (proximity > 100){
-    RobotContainer.m_operatorController.setRumble(GenericHID.RumbleType.kLeftRumble, 0.7);  
+    //if (proximity > 100){
+    //RobotContainer.m_operatorController.setRumble(GenericHID.RumbleType.kLeftRumble, 0.7);  
       //System.out.println("PVC visible");
-    }
-    else{
-      RobotContainer.m_operatorController.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
-      System.out.println("PVC not visible");
-    } 
+   // }
+    //else{
+      //RobotContainer.m_operatorController.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
+      //System.out.println("PVC not visible");
+    //}
+    
+    
   }
   public void setIntakeMotors (double speed){
     if(!hasCoral){
       leftSparkMax.set(speed);
-      //rightSparkMax.set(speed);
+      rightSparkMax.set(-speed);
     }
+
+    // else{
+    //   leftSparkMax.set(0);
+    //   rightSparkMax.set(0);
+    // }
     
   }
   public void pidSetIntakeMotors (double targetVelocity){

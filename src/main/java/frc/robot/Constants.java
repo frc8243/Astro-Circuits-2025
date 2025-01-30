@@ -112,7 +112,7 @@ public final class Constants {
 
     public static final double kStowHeight = 0;
     public static final double kL2Height = 9;
-    public static final double kL3Height = 25.14;
+    public static final double kL3Height = 28.14;
     public static final double kL4Height = 52;
     public static final double kMaxHeight = 56.2;
     public static final double kLowAlgaeHeight = 24.8;
