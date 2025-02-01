@@ -146,9 +146,12 @@ public class RobotContainer {
     //         m_robotDrive));
 
      operatorButtonBinder.getButton("x", "Coral Intake").whileTrue(m_coralHandler.coralIntake(-0.2)).onFalse(m_coralHandler.coralIntake(0));
+     operatorButtonBinder.getButton("rightBumper", "Coral Level 1").whileTrue(m_coralHandler.coralBaseOutake(0.2)).onFalse(m_coralHandler.coralBaseOutake(0));
+
      //m_operatorController.y().whileTrue(m_coralHandler.coralOutake(0.2)).onFalse(m_coralHandler.coralIntake(0));
      operatorButtonBinder.getButton("y", "Coral Outake").whileTrue(m_coralHandler.coralIntake(0.2)).onFalse(m_coralHandler.coralIntake(0));
-
+     operatorButtonBinder.getButton("start", "Algae Intake").whileTrue(m_AlgaeSubsystem.AlgaeIntake(-0.2)).onFalse(m_AlgaeSubsystem.AlgaeIntake(0));
+     operatorButtonBinder.getButton("back", "Algae outtake").whileTrue(m_AlgaeSubsystem.AlgaeIntake(0.2)).onFalse(m_AlgaeSubsystem.AlgaeIntake(0));
     // m_operatorController.a().whileTrue(m_AlgaeSubsystem.AlgaeIntake(0.2));
     // m_operatorController.b().whileTrue(m_AlgaeSubsystem.AlgaeOutake(0.2));
       m_operatorController.a().whileTrue(m_elevator.goToLiftL2Command());

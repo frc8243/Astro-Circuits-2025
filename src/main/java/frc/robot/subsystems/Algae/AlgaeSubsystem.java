@@ -86,15 +86,15 @@ public class AlgaeSubsystem extends SubsystemBase {
 
   public AlgaeSubsystem() {
     m_PeriodicIO = new PeriodicIO();
-    algaeLiftMotor = new SparkMax(61, MotorType.kBrushless);  
-    algaeIntakeMotor = new SparkMax(62, MotorType.kBrushless);  
-    algaeIntakeConfig.inverted(intakeInverted).idleMode(motorIdleMode);
+    algaeLiftMotor = new SparkMax(62, MotorType.kBrushless);  
+    algaeIntakeMotor = new SparkMax(61, MotorType.kBrushless);  
+    algaeIntakeConfig.inverted(intakeInverted).idleMode(motorIdleMode).smartCurrentLimit(NeoMotorConstants.NEOCurrentLimit);
     algaeIntakeConfig.encoder.positionConversionFactor(intakePositionFactor)
       .velocityConversionFactor(intakePositionFactor);
     algaeIntakeConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
       .pid(intake_P, intake_I, intake_D,ClosedLoopSlot.kSlot1).outputRange(minOutput, maxOutput);
 
-    algaeLiftConfig.inverted(liftInverted).idleMode(motorIdleMode);
+    algaeLiftConfig.inverted(liftInverted).idleMode(motorIdleMode).smartCurrentLimit(NeoMotorConstants.NEOCurrentLimit);
     algaeLiftConfig.encoder.positionConversionFactor(liftPositionFactor)
       .velocityConversionFactor(liftPositionFactor/60);
     algaeLiftConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
@@ -135,7 +135,7 @@ algaeIntakeMotor.set(0);
 
 public Command AlgaeIntake (double velocity){
   return this.startEnd(
-    ()->{pidIntake(velocity); 
+    ()->{intakeAlgae(velocity); 
       System.out.println("Grabbing Algae.");},
     ()-> stop());
     }
@@ -187,8 +187,6 @@ public Command AlgaeOutake (double speed){
           ClosedLoopSlot.kSlot0,
            Constants.Elevator.kG,
           ArbFFUnits.kVoltage);
-
-
 
       
     } else {

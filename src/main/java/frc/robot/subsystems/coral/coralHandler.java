@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
+import frc.robot.Constants.NeoMotorConstants;
 
 public class coralHandler extends SubsystemBase {
   private final SparkMax leftSparkMax;
@@ -62,21 +63,20 @@ public class coralHandler extends SubsystemBase {
 
   //private final ColorSensorV3 colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
   private boolean hasCoral = false;
-  
-  // private LaserCan firstLaser;
+   private LaserCan firstLaser;
   // private LaserCan secondLaser;
   /** Creates a new coral. */
   public coralHandler() {
     leftSparkMax = new SparkMax(52, MotorType.kBrushless); 
  
 
-     sparkMaxConfigLeft.inverted(leftEncoderInverted).idleMode(leftMotorIdleMode);
+     sparkMaxConfigLeft.inverted(leftEncoderInverted).idleMode(leftMotorIdleMode).smartCurrentLimit(NeoMotorConstants.NEOCurrentLimit);
      sparkMaxConfigLeft.encoder.positionConversionFactor(leftEncoderPositionFactor)
        .velocityConversionFactor(leftEncoderPositionFactor/60);
      sparkMaxConfigLeft.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
        .pid(leftP, leftI, leftD, ClosedLoopSlot.kSlot1).outputRange(leftMinOutput, leftMaxOutput);
 
-      sparkMaxConfigRight.inverted(rightEncoderInverted).idleMode(rightMotorIdleMode);
+      sparkMaxConfigRight.inverted(rightEncoderInverted).idleMode(rightMotorIdleMode).smartCurrentLimit(NeoMotorConstants.NEOCurrentLimit);
       sparkMaxConfigRight.encoder.positionConversionFactor(rightEncoderPositionFactor)
         .velocityConversionFactor(rightEncoderPositionFactor/60);
       sparkMaxConfigRight.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
@@ -95,15 +95,15 @@ public class coralHandler extends SubsystemBase {
     leftPidController = leftSparkMax.getClosedLoopController();
     rightPidController = rightSparkMax.getClosedLoopController();
     
-    // firstLaser=new LaserCan(9);
+     firstLaser=new LaserCan(10);
     // secondLaser=new LaserCan(10);
-    // try {
-    //   firstLaser.setRangingMode(LaserCan.RangingMode.SHORT);
-    //   firstLaser.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 16 , 16));
-    //   firstLaser.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
-    // } catch (ConfigurationFailedException e) {
-    //   System.out.println("Configuration failed " + e);
-    // }
+     try {
+       firstLaser.setRangingMode(LaserCan.RangingMode.SHORT);
+       firstLaser.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 16 , 16));
+       firstLaser.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
+     } catch (ConfigurationFailedException e) {
+       System.out.println("Configuration failed " + e);
+     }
     // try{
     // secondLaser.setRangingMode(LaserCan.RangingMode.SHORT);
     //   secondLaser.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 16 , 16));
@@ -117,7 +117,7 @@ public class coralHandler extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-//  LaserCan.Measurement measurement1 = firstLaser.getMeasurement();
+  LaserCan.Measurement measurement1 = firstLaser.getMeasurement();
   //LaserCan.Measurement measurement2 = secondLaser.getMeasurement();
 
 // if ( ( measurement1 !=null && measurement1.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT) && ( measurement2 !=null && measurement2.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT)) {
@@ -129,6 +129,18 @@ public class coralHandler extends SubsystemBase {
 //   System.out.println("no coral");
 //   hasCoral=false;
 // }
+
+// if ( ( measurement1 !=null && measurement1.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT)) {
+  if ( ( measurement1 !=null && measurement1.distance_mm < 100)) {
+  
+   System.out.println("the target is " + measurement1.distance_mm + "mm away!");
+   System.out.println("has coral");
+   hasCoral=true;
+ }
+ else {
+   System.out.println("no coral");
+   hasCoral=false;
+ }
     //int proximity = colorSensor.getProximity();
 
     //System.out.println("Proximity: " + proximity);
@@ -148,15 +160,17 @@ public class coralHandler extends SubsystemBase {
     
   }
   public void setIntakeMotors (double speed){
-    if(!hasCoral){
+   // if(!hasCoral){
       leftSparkMax.set(speed);
       rightSparkMax.set(-speed);
-    }
+    //}
 
-    // else{
-    //   leftSparkMax.set(0);
-    //   rightSparkMax.set(0);
-    // }
+
+
+    //  else{
+    //    leftSparkMax.set(0);
+    //    rightSparkMax.set(0);
+    //  }
     
   }
   public void pidSetIntakeMotors (double targetVelocity){
@@ -168,16 +182,19 @@ public class coralHandler extends SubsystemBase {
   }
 
   public void setOutakeMotors (double speed){
-    //if(hasCoral){
+    if(hasCoral){
       leftSparkMax.set(speed);
       rightSparkMax.set(speed);
-    //}
-    
+    }
+    else{
+      leftSparkMax.set(0);
+      rightSparkMax.set(0);
+    }
   }
   public void setOutakeBaseMotor (double speed){
     //if(hasCoral){
       leftSparkMax.set(speed);
-      rightSparkMax.set(speed/2);
+      rightSparkMax.set(-speed/2);
     //}
 
   }
@@ -222,7 +239,7 @@ public class coralHandler extends SubsystemBase {
   }
   public Command coralBaseOutake (double speed){
       return this.run(
-        ()->{setOutakeMotors(speed);
+        ()->{setOutakeBaseMotor(speed);
         System.out.println("Coral Outaking at Base");}
       );
   }
