@@ -20,6 +20,7 @@ import au.grapplerobotics.LaserCan;
 import edu.wpi.first.math.trajectory.constraint.RectangularRegionConstraint;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
@@ -99,7 +100,7 @@ public class coralHandler extends SubsystemBase {
     // secondLaser=new LaserCan(10);
      try {
        firstLaser.setRangingMode(LaserCan.RangingMode.SHORT);
-       firstLaser.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 16 , 16));
+       firstLaser.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 8 , 8));
        firstLaser.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
      } catch (ConfigurationFailedException e) {
        System.out.println("Configuration failed " + e);
@@ -120,18 +121,9 @@ public class coralHandler extends SubsystemBase {
   LaserCan.Measurement measurement1 = firstLaser.getMeasurement();
   //LaserCan.Measurement measurement2 = secondLaser.getMeasurement();
 
-// if ( ( measurement1 !=null && measurement1.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT) && ( measurement2 !=null && measurement2.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT)) {
-//   System.out.println("the target is " + measurement1.distance_mm + "mm away!");
-//   System.out.println("has coral");
-//   hasCoral=true;
-// }
-// else {
-//   System.out.println("no coral");
-//   hasCoral=false;
-// }
 
 // if ( ( measurement1 !=null && measurement1.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT)) {
-  if ( ( measurement1 !=null && measurement1.distance_mm < 100)) {
+  if ( ( measurement1 !=null && measurement1.distance_mm < 50)) {
   
    System.out.println("the target is " + measurement1.distance_mm + "mm away!");
    System.out.println("has coral");
@@ -142,7 +134,8 @@ public class coralHandler extends SubsystemBase {
    hasCoral=false;
  }
     //int proximity = colorSensor.getProximity();
-
+     SmartDashboard.putBoolean("Sensor Eyes:",measurement1.status ==LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT);
+     SmartDashboard.putNumber("sensor distance", measurement1.distance_mm); 
     //System.out.println("Proximity: " + proximity);
     
     // Proximity is higher when the object is closer
@@ -173,6 +166,22 @@ public class coralHandler extends SubsystemBase {
     //  }
     
   }
+  /**
+   * Moves Intake Motors when Detecting Coral
+   * @param speed
+   */
+  public void setAutoIntakeMotors (double speed){
+      if(hasCoral){
+       leftSparkMax.set(speed);
+       rightSparkMax.set(-speed);
+       System.out.print("Trying to intake");
+      }
+       else{
+         leftSparkMax.set(0);
+         rightSparkMax.set(0);
+       }
+     
+   }
   public void pidSetIntakeMotors (double targetVelocity){
     //if(!hasCoral){
       leftPidController.setReference(targetVelocity, ControlType.kVelocity, ClosedLoopSlot.kSlot1);
@@ -242,6 +251,12 @@ public class coralHandler extends SubsystemBase {
         ()->{setOutakeBaseMotor(speed);
         System.out.println("Coral Outaking at Base");}
       );
+  }
+  public Command defaultCoralIntake (double velocity){
+    return this.run(
+      ()->{setAutoIntakeMotors(velocity); 
+        System.out.println("Coral Intaking");}
+    );
   }
 
 }

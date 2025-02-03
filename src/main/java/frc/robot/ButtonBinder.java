@@ -87,6 +87,11 @@ public class ButtonBinder {
 
         buttonInfo.put("start", new ButtonInfo("", controller::start, 0,8));
         buttonInfo.put("back", new ButtonInfo("", controller::back, 1,8));
+
+        buttonInfo.put("povUp", new ButtonInfo("", controller::povUp, 2,8));
+        buttonInfo.put("povRight", new ButtonInfo("", controller::povRight, 3,8));
+        buttonInfo.put("povLeft", new ButtonInfo("", controller::povLeft, 4,8));
+        buttonInfo.put("povDown", new ButtonInfo("", controller::povDown, 5,8));
     }
 
 /**

@@ -46,12 +46,12 @@ import com.pathplanner.lib.auto.AutoBuilder;
  * (including subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  //private SendableChooser<Command> autoChooser;
+  private SendableChooser<Command> autoChooser;
   // The robot's subsystems
- // private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   private final coralHandler m_coralHandler = new coralHandler();
   public final elevator m_elevator = new elevator();
- // private final Vision m_vision = new Vision(m_robotDrive);
+  private final Vision m_vision = new Vision(m_robotDrive);
   private final AlgaeSubsystem m_AlgaeSubsystem = new AlgaeSubsystem();
 
   // The driver's controller
@@ -90,43 +90,43 @@ public class RobotContainer {
       AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
   thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-  // SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-  //     exampleTrajectory,
-  //     m_robotDrive::getPose, // Functional interface to feed supplier
-  //     DriveConstants.kDriveKinematics,
+  SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
+      exampleTrajectory,
+      m_robotDrive::getPose, // Functional interface to feed supplier
+      DriveConstants.kDriveKinematics,
 
-  //     // Position controllers
-  //     new PIDController(AutoConstants.kPXController, 0, 0),
-  //     new PIDController(AutoConstants.kPYController, 0, 0),
-  //     thetaController,
-  //     m_robotDrive::setModuleStates,
-  //     m_robotDrive);
+      // Position controllers
+      new PIDController(AutoConstants.kPXController, 0, 0),
+      new PIDController(AutoConstants.kPYController, 0, 0),
+      thetaController,
+      m_robotDrive::setModuleStates,
+      m_robotDrive);
 
   // // Reset odometry to the starting pose of the trajectory.
-  // m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
+   m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
 
     
 
-    //autoChooser = AutoBuilder.buildAutoChooser();
-    //SmartDashboard.putData("Auto Chooser", autoChooser);
+    autoChooser = AutoBuilder.buildAutoChooser();
+    SmartDashboard.putData("Auto Chooser", autoChooser);
 
     
 
     // Configure default commands
-    // m_robotDrive.setDefaultCommand(
-    //     // The left stick controls translation of the robot.
-    //     // Turning is controlled by the X axis of the right stick.
-    //     new RunCommand(
-    //         () -> m_robotDrive.drive(
-    //             -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
-    //             -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
-    //             -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
-    //             true),
-    //         m_robotDrive));
+    m_robotDrive.setDefaultCommand(
+        // The left stick controls translation of the robot.
+        // Turning is controlled by the X axis of the right stick.
+        new RunCommand(
+            () -> m_robotDrive.drive(
+                -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
+                -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
+                -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
+                true),
+            m_robotDrive));
 
       m_coralHandler.setDefaultCommand(
         new RunCommand(
-            () -> m_coralHandler.stopMotors()
+            () -> m_coralHandler.setAutoIntakeMotors(0.075)
             , m_coralHandler));
   }
 
@@ -140,39 +140,46 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
-    // m_driverController.rightBumper()
-    //     .whileTrue(new RunCommand(
-    //         () -> m_robotDrive.setX(),
-    //         m_robotDrive));
+     m_driverController.rightBumper()
+         .whileTrue(new RunCommand(
+             () -> m_robotDrive.setX(),
+             m_robotDrive));
 
-     operatorButtonBinder.getButton("x", "Coral Intake").whileTrue(m_coralHandler.coralIntake(-0.2)).onFalse(m_coralHandler.coralIntake(0));
-     operatorButtonBinder.getButton("rightBumper", "Coral Level 1").whileTrue(m_coralHandler.coralBaseOutake(0.2)).onFalse(m_coralHandler.coralBaseOutake(0));
+     operatorButtonBinder.getButton("x", "Coral Intake")
+     .whileTrue(m_coralHandler.coralIntake(-0.2));//.onFalse(m_coralHandler.coralIntake(0));
 
-     //m_operatorController.y().whileTrue(m_coralHandler.coralOutake(0.2)).onFalse(m_coralHandler.coralIntake(0));
-     operatorButtonBinder.getButton("y", "Coral Outake").whileTrue(m_coralHandler.coralIntake(0.2)).onFalse(m_coralHandler.coralIntake(0));
-     operatorButtonBinder.getButton("start", "Algae Intake").whileTrue(m_AlgaeSubsystem.AlgaeIntake(-0.2)).onFalse(m_AlgaeSubsystem.AlgaeIntake(0));
-     operatorButtonBinder.getButton("back", "Algae outtake").whileTrue(m_AlgaeSubsystem.AlgaeIntake(0.2)).onFalse(m_AlgaeSubsystem.AlgaeIntake(0));
+     operatorButtonBinder.getButton("rightBumper", "Coral Level 1")
+     .whileTrue(m_coralHandler.coralBaseOutake(0.2)).onFalse(m_coralHandler.coralBaseOutake(0));
+
+     operatorButtonBinder.getButton("y", "Coral Outake")
+      .whileTrue(m_coralHandler.coralIntake(0.2));//.onFalse(m_coralHandler.coralIntake(0));
+
+     operatorButtonBinder.getButton("start", "Algae Intake")
+     .whileTrue(m_AlgaeSubsystem.AlgaeIntake(-0.2)).onFalse(m_AlgaeSubsystem.AlgaeIntake(0));
+
+     operatorButtonBinder.getButton("back", "Algae outtake")
+     .whileTrue(m_AlgaeSubsystem.AlgaeIntake(0.2)).onFalse(m_AlgaeSubsystem.AlgaeIntake(0));
+
+    operatorButtonBinder.getButton("povLeft", "Go to L2")
+    .whileTrue(m_elevator.goToLiftL2Command());
+
+    operatorButtonBinder.getButton("povRight", "Go to L3")
+    .whileTrue(m_elevator.goToLiftL3Command());
+
+    operatorButtonBinder.getButton("povDown", "Go to bottom")
+    .whileTrue(m_elevator.goToLiftStowCommand());
+
+    operatorButtonBinder.getButton("povUp", "Go to L4")
+    .whileTrue(m_elevator.goToLiftL4Command());
     // m_operatorController.a().whileTrue(m_AlgaeSubsystem.AlgaeIntake(0.2));
     // m_operatorController.b().whileTrue(m_AlgaeSubsystem.AlgaeOutake(0.2));
-      m_operatorController.a().whileTrue(m_elevator.goToLiftL2Command());
-      m_operatorController.leftBumper().whileTrue(m_elevator.goToLiftL3Command());
-      m_operatorController.b().whileTrue(m_elevator.goToLiftStowCommand());
-      m_operatorController.povUp().whileTrue(m_elevator.goToLiftL4Command());
-    //m_operatorController.a().onTrue(m_elevator.goToLiftL2Command());
-    // operatorButtonBinder.getButton("a", "Elevator To L2").onTrue(m_elevator.goToLiftL2Command());
-    // operatorButtonBinder.getButton("b", "Elevator To Stow").onTrue(m_elevator.goToLiftStowCommand());
-    // operatorButtonBinder.getButton("x", "Elevator To L3").onTrue(m_elevator.goToLiftL3Command());
-    // operatorButtonBinder.getButton("y", "Elevator To L4").onTrue(m_elevator.goToLiftL4Command());
-    // m_operatorController.b().onTrue(m_elevator.goToLiftStowCommand());
-    //m_operatorController.x().onTrue(m_elevator.goToLiftL3Command());
-    //m_operatorController.y().onTrue(m_elevator.goToLiftL4Command());
     //m_operatorController.rightBumper().whileTrue
     //m_operatorController.leftBumper().whileTrue
 //public void setRumble(GenericHID.RumbleType leftRumble,
 //double 0.9 );
-    // driverButtonBinder.getButton("rightBumper", "Turn To Target").whileTrue(new TurnToTarget(m_robotDrive, m_vision));
-    // driverButtonBinder.getButton("leftBumper", "Move To Target").whileTrue(new MoveToTarget(m_robotDrive, m_vision));
-    //m_driverController.rightBumper().whileTrue(new TurnToTarget(m_robotDrive, m_vision));
+     driverButtonBinder.getButton("rightBumper", "Turn To Target").whileTrue(new TurnToTarget(m_robotDrive, m_vision));
+     driverButtonBinder.getButton("leftBumper", "Move To Target").whileTrue(new MoveToTarget(m_robotDrive, m_vision));
+  
 
   }
 
