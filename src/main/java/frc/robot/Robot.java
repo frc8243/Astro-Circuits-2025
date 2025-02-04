@@ -65,7 +65,8 @@ public class Robot extends TimedRobot {
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
-    m_robotContainer.m_elevator.stop();
+    //m_robotContainer.m_elevator.stop();
+    m_robotContainer.m_Algaewrist.stop();
   }
 
   @Override
@@ -91,7 +92,9 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+    SmartDashboard.putNumber("Gyro Heading", m_robotContainer.m_robotDrive.m_gyro.getYaw().getValueAsDouble());
+  }
 
   @Override
   public void teleopInit() {

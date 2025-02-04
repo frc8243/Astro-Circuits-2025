@@ -26,6 +26,8 @@ import frc.robot.commands.MoveToTarget;
 import frc.robot.commands.TurnToTarget;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Algae.AlgaeSubsystem;
+import frc.robot.subsystems.Algae.AlgaeWrist;
+import frc.robot.subsystems.Algae.AlgaeWrist.WristAngle;
 import frc.robot.subsystems.coral.coralHandler;
 import frc.robot.subsystems.elevator.elevator;
 import frc.robot.subsystems.vision.Vision;
@@ -37,6 +39,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import java.util.List;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
 
 /*
@@ -48,12 +51,12 @@ import com.pathplanner.lib.auto.AutoBuilder;
 public class RobotContainer {
   private SendableChooser<Command> autoChooser;
   // The robot's subsystems
-  private final DriveSubsystem m_robotDrive = new DriveSubsystem();
-  private final coralHandler m_coralHandler = new coralHandler();
-  public final elevator m_elevator = new elevator();
+  public final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  //private final coralHandler m_coralHandler = new coralHandler();
+  //public final elevator m_elevator = new elevator();
   private final Vision m_vision = new Vision(m_robotDrive);
-  private final AlgaeSubsystem m_AlgaeSubsystem = new AlgaeSubsystem();
-
+  //private final AlgaeSubsystem m_AlgaeSubsystem = new AlgaeSubsystem();
+  public final AlgaeWrist m_Algaewrist = new AlgaeWrist();
   // The driver's controller
  public static CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);// port 0
  public static CommandXboxController m_operatorController = new CommandXboxController(OIConstants.kOperatorControllerPort);// port 1
@@ -66,6 +69,9 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
+
+    //NamedCommands.registerCommand("Outake Coral", m_coralHandler.coralOutake(0.2).withTimeout(5));
+
     System.out.println(driverButtonBinder.getButtonUsageReport());
     driverButtonBinder.makeStatusDashboardWidgets("Driver Buttons");
     operatorButtonBinder.makeStatusDashboardWidgets("Operator Buttons");
@@ -124,10 +130,12 @@ public class RobotContainer {
                 true),
             m_robotDrive));
 
-      m_coralHandler.setDefaultCommand(
-        new RunCommand(
-            () -> m_coralHandler.setAutoIntakeMotors(0.075)
-            , m_coralHandler));
+      // m_coralHandler.setDefaultCommand(
+      //   new RunCommand(
+      //       () -> m_coralHandler.setAutoIntakeMotors(0.075)
+      //       , m_coralHandler));
+
+      
   }
 
   /**
@@ -145,32 +153,33 @@ public class RobotContainer {
              () -> m_robotDrive.setX(),
              m_robotDrive));
 
-     operatorButtonBinder.getButton("x", "Coral Intake")
-     .whileTrue(m_coralHandler.coralIntake(-0.2));//.onFalse(m_coralHandler.coralIntake(0));
+    //  operatorButtonBinder.getButton("x", "Coral Intake")
+    //  .whileTrue(m_coralHandler.coralIntake(-0.2));
 
-     operatorButtonBinder.getButton("rightBumper", "Coral Level 1")
-     .whileTrue(m_coralHandler.coralBaseOutake(0.2)).onFalse(m_coralHandler.coralBaseOutake(0));
+    //  operatorButtonBinder.getButton("rightBumper", "Coral Level 1")
+    //  .whileTrue(m_coralHandler.coralBaseOutake(0.2));
 
-     operatorButtonBinder.getButton("y", "Coral Outake")
-      .whileTrue(m_coralHandler.coralIntake(0.2));//.onFalse(m_coralHandler.coralIntake(0));
+    //  operatorButtonBinder.getButton("y", "Coral Outake")
+    //   .whileTrue(m_coralHandler.coralIntake(0.2));
 
-     operatorButtonBinder.getButton("start", "Algae Intake")
-     .whileTrue(m_AlgaeSubsystem.AlgaeIntake(-0.2)).onFalse(m_AlgaeSubsystem.AlgaeIntake(0));
+    //  operatorButtonBinder.getButton("start", "Algae Intake")
+    //  .whileTrue(m_AlgaeSubsystem.AlgaeIntake(-0.2)).onFalse(m_AlgaeSubsystem.AlgaeIntake(0));
 
-     operatorButtonBinder.getButton("back", "Algae outtake")
-     .whileTrue(m_AlgaeSubsystem.AlgaeIntake(0.2)).onFalse(m_AlgaeSubsystem.AlgaeIntake(0));
+    //  operatorButtonBinder.getButton("back", "Algae outtake")
+    //  .whileTrue(m_AlgaeSubsystem.AlgaeIntake(0.2)).onFalse(m_AlgaeSubsystem.AlgaeIntake(0));
 
-    operatorButtonBinder.getButton("povLeft", "Go to L2")
-    .whileTrue(m_elevator.goToLiftL2Command());
+    // operatorButtonBinder.getButton("povLeft", "Go to L2")
+    // .whileTrue(m_elevator.goToLiftL2Command());
 
-    operatorButtonBinder.getButton("povRight", "Go to L3")
-    .whileTrue(m_elevator.goToLiftL3Command());
+    // operatorButtonBinder.getButton("povRight", "Go to L3")
+    // .whileTrue(m_elevator.goToLiftL3Command());
 
-    operatorButtonBinder.getButton("povDown", "Go to bottom")
-    .whileTrue(m_elevator.goToLiftStowCommand());
-
-    operatorButtonBinder.getButton("povUp", "Go to L4")
-    .whileTrue(m_elevator.goToLiftL4Command());
+    // operatorButtonBinder.getButton("povDown", "Go to bottom")
+    // .whileTrue(m_elevator.goToLiftStowCommand());
+operatorButtonBinder.getButton("a", "Wrist to A1")
+    .whileTrue(m_Algaewrist.goToWristAngleCommand(WristAngle.A1));
+    // operatorButtonBinder.getButton("povUp", "Go to L4")
+    // .whileTrue(m_elevator.goToLiftL4Command());
     // m_operatorController.a().whileTrue(m_AlgaeSubsystem.AlgaeIntake(0.2));
     // m_operatorController.b().whileTrue(m_AlgaeSubsystem.AlgaeOutake(0.2));
     //m_operatorController.rightBumper().whileTrue
@@ -194,6 +203,6 @@ public class RobotContainer {
 
     // Run path following command, then stop at the end.
 
-    return null; //autoChooser.getSelected();
+    return autoChooser.getSelected();
   }
 }

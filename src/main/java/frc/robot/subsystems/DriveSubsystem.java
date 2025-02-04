@@ -20,7 +20,9 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 
@@ -47,7 +49,7 @@ public class DriveSubsystem extends SubsystemBase {
       DriveConstants.kBackRightChassisAngularOffset);
 
   // The gyro sensor
-  private final Pigeon2 m_gyro = new Pigeon2(2,"rio");
+  public final Pigeon2 m_gyro = new Pigeon2(2,"rio");
 
   // Odometry class for tracking robot pose
   SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
@@ -113,7 +115,8 @@ public class DriveSubsystem extends SubsystemBase {
             m_rearLeft.getPosition(),
             m_rearRight.getPosition()
         });
-       
+        SmartDashboard.putNumber("Gyro Heading", m_gyro.getYaw().getValueAsDouble());
+      
   }
 
   /**
@@ -168,7 +171,13 @@ public class DriveSubsystem extends SubsystemBase {
     m_frontRight.setDesiredState(swerveModuleStates[1]);
     m_rearLeft.setDesiredState(swerveModuleStates[2]);
     m_rearRight.setDesiredState(swerveModuleStates[3]);
+   // SmartDashboard.("Chassis Speeds", ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered,rotDelivered,Rotation2d.fromDegrees(m_gyro.getYaw().getValueAsDouble())));
+ //SmartDashboard.putNumber("")   
+ //SmartDashboard.putNumber("") 
+ //SmartDashboard.putNumber("") 
+  
   }
+
 
   /**
    * Sets the wheels into an X formation to prevent movement.

@@ -7,7 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "toReef"
+            "pathName": "straight to reef"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Outake Coral"
           }
         }
       ]
