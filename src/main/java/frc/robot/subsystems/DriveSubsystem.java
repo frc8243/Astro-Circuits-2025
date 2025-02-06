@@ -214,6 +214,8 @@ public class DriveSubsystem extends SubsystemBase {
   /** Zeroes the heading of the robot. */
   public void zeroHeading() {
     m_gyro.reset();
+    m_gyro.setYaw(0);
+   // m_gyro.reset
   }
 
   /**
@@ -236,5 +238,7 @@ public class DriveSubsystem extends SubsystemBase {
   public void gyroReset(){
     System.out.println("Gyro Reset");
     m_gyro.reset();
+    m_gyro.setYaw(0);
+
   }
 }

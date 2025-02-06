@@ -83,14 +83,14 @@ public final class Constants {
   }
 
   public static final class AutoConstants {
-    public static final double kMaxSpeedMetersPerSecond = 3;
-    public static final double kMaxAccelerationMetersPerSecondSquared = 3;
+    public static final double kMaxSpeedMetersPerSecond = .5;
+    public static final double kMaxAccelerationMetersPerSecondSquared = .5;
     public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
 
     public static final double kPXController = 1;
     public static final double kPYController = 1;
-    public static final double kPThetaController = 1;
+    public static final double kPThetaController = 0.25;
 
     // Constraint for the motion profiled robot angle controller
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
@@ -112,9 +112,9 @@ public final class Constants {
     public static final double kMaxAcceleration = 20; //TODO: FIND WHAT THIS IS
 
     public static final double kStowHeight = 0;
-    public static final double kL2Height = 9;
-    public static final double kL3Height = 28.14;
-    public static final double kL4Height = 52;
+    public static final double kL2Height = 10;
+    public static final double kL3Height = 32.14;
+    public static final double kL4Height = 59;
     public static final double kMaxHeight = 56.2;
     public static final double kLowAlgaeHeight = 24.8;
     public static final double kHighAlgaeHeight = 42.5;

@@ -52,41 +52,41 @@ public class AlgaeSubsystem extends SubsystemBase {
   private PeriodicIO m_PeriodicIO;
 
   private final SparkMax algaeIntakeMotor;
-  private final SparkMax algaeLiftMotor;
+  //private final SparkMax algaeLiftMotor;
 
   private static final SparkMaxConfig algaeIntakeConfig = new SparkMaxConfig();
-  private static final SparkMaxConfig algaeLiftConfig = new SparkMaxConfig();
+  //private static final SparkMaxConfig algaeLiftConfig = new SparkMaxConfig();
 
   private static final boolean intakeInverted = false;
-  private static final boolean liftInverted = false;
+  //private static final boolean liftInverted = false;
 
   private static final double intakePositionFactor = 1;
-  private static final double liftPositionFactor = 1;
+  //private static final double liftPositionFactor = 1;
 
   private static final double intake_P = 0.01;
   private static final double intake_I = 0;
   private static final double intake_D = 0;
 
-  private static final double lift_P = 0.01;
-  private static final double lift_I = 0;
-  private static final double lift_D = 0;
+  //private static final double lift_P = 0.01;
+  //private static final double lift_I = 0;
+  //private static final double lift_D = 0;
 
-  private static final double minOutput = -1;
-  private static final double maxOutput = 1;
+  private static final double minOutput = -.2;
+  private static final double maxOutput = .2;
 
   private static final SparkMaxConfig.IdleMode motorIdleMode = SparkBaseConfig.IdleMode.kBrake;
 
   private final RelativeEncoder intakeRelativeEncoder;
-  private final RelativeEncoder liftRelativeEncoder;
+  //private final RelativeEncoder liftRelativeEncoder;
 
   private final SparkClosedLoopController intakePidController;
-  private final SparkClosedLoopController liftPidController;
+  //private final SparkClosedLoopController liftPidController;
 
   
 
   public AlgaeSubsystem() {
     m_PeriodicIO = new PeriodicIO();
-    algaeLiftMotor = new SparkMax(62, MotorType.kBrushless);  
+    //algaeLiftMotor = new SparkMax(62, MotorType.kBrushless);  
     algaeIntakeMotor = new SparkMax(61, MotorType.kBrushless);  
     algaeIntakeConfig.inverted(intakeInverted).idleMode(motorIdleMode).smartCurrentLimit(NeoMotorConstants.NEOCurrentLimit);
     algaeIntakeConfig.encoder.positionConversionFactor(intakePositionFactor)
@@ -94,22 +94,22 @@ public class AlgaeSubsystem extends SubsystemBase {
     algaeIntakeConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
       .pid(intake_P, intake_I, intake_D,ClosedLoopSlot.kSlot1).outputRange(minOutput, maxOutput);
 
-    algaeLiftConfig.inverted(liftInverted).idleMode(motorIdleMode).smartCurrentLimit(NeoMotorConstants.NEOCurrentLimit);
-    algaeLiftConfig.encoder.positionConversionFactor(liftPositionFactor)
-      .velocityConversionFactor(liftPositionFactor/60);
-    algaeLiftConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-      .pid(lift_P, lift_I, lift_D, ClosedLoopSlot.kSlot0).outputRange(minOutput, maxOutput);
+    //algaeLiftConfig.inverted(liftInverted).idleMode(motorIdleMode).smartCurrentLimit(NeoMotorConstants.NEOCurrentLimit);
+    //algaeLiftConfig.encoder.positionConversionFactor(liftPositionFactor)
+    //  .velocityConversionFactor(liftPositionFactor/60);
+    //algaeLiftConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+    //  .pid(lift_P, lift_I, lift_D, ClosedLoopSlot.kSlot0).outputRange(minOutput, maxOutput);
 
   
 
     algaeIntakeMotor.configure(algaeIntakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    algaeLiftMotor.configure(algaeLiftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    //algaeLiftMotor.configure(algaeLiftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     intakeRelativeEncoder =  algaeIntakeMotor.getEncoder();
-    liftRelativeEncoder = algaeLiftMotor.getEncoder();
+    //liftRelativeEncoder = algaeLiftMotor.getEncoder();
 
     intakePidController = algaeIntakeMotor.getClosedLoopController();
-    liftPidController = algaeLiftMotor.getClosedLoopController();
+    //liftPidController = algaeLiftMotor.getClosedLoopController();
 
     mProfile = new TrapezoidProfile(
       new TrapezoidProfile.Constraints(Constants.Elevator.kMaxVelocity, Constants.Elevator.kMaxAcceleration));
@@ -120,10 +120,10 @@ public void intakeAlgae (double speed){
  algaeIntakeMotor.set(speed);
 }
 
-public void pidIntake (double targetVelocity){
-  liftPidController.setReference(targetVelocity, ControlType.kVelocity, ClosedLoopSlot.kSlot1);
+// public void pidIntake (double targetVelocity){
+//   liftPidController.setReference(targetVelocity, ControlType.kVelocity, ClosedLoopSlot.kSlot1);
 
-}
+// }
 
 public void outakeAlgae (double speed){
 algaeIntakeMotor.set(speed);
@@ -150,7 +150,7 @@ public Command AlgaeOutake (double speed){
     
   @Override
   public void periodic() {
-    writePeriodicOutputs();
+    //writePeriodicOutputs();
   }
   public enum AlgaeState {
     NONE,
@@ -168,38 +168,38 @@ public Command AlgaeOutake (double speed){
     AlgaeState state = AlgaeState.STOW;
   }
 
-  public void writePeriodicOutputs() {
-    double curTime = Timer.getFPGATimestamp();
-    double dt = curTime - prevUpdateTime;
-    prevUpdateTime = curTime;
-    if (m_PeriodicIO.is_algae_pos_control) {
-      // Update goal
-      mGoalState.position = m_PeriodicIO.algae_target;
+  // public void writePeriodicOutputs() {
+  //   double curTime = Timer.getFPGATimestamp();
+  //   double dt = curTime - prevUpdateTime;
+  //   prevUpdateTime = curTime;
+  //   if (m_PeriodicIO.is_algae_pos_control) {
+  //     // Update goal
+  //     mGoalState.position = m_PeriodicIO.algae_target;
 
-      // Calculate new state
-      prevUpdateTime = curTime;
-      mCurState = mProfile.calculate(dt, mCurState, mGoalState);
+  //     // Calculate new state
+  //     prevUpdateTime = curTime;
+  //     mCurState = mProfile.calculate(dt, mCurState, mGoalState);
 
-      // Set PID controller to new state
-      liftPidController.setReference(
-          mCurState.position,
-          SparkMax.ControlType.kPosition,
-          ClosedLoopSlot.kSlot0,
-           Constants.Elevator.kG,
-          ArbFFUnits.kVoltage);
+  //     // Set PID controller to new state
+  //     liftPidController.setReference(
+  //         mCurState.position,
+  //         SparkMax.ControlType.kPosition,
+  //         ClosedLoopSlot.kSlot0,
+  //          Constants.Elevator.kG,
+  //         ArbFFUnits.kVoltage);
 
       
-    } else {
-      mCurState.position = liftRelativeEncoder.getPosition();
-      mCurState.velocity = 0;
-      algaeLiftMotor.set(m_PeriodicIO.algae_power);
+  //   } else {
+  //     mCurState.position = liftRelativeEncoder.getPosition();
+  //     mCurState.velocity = 0;
+  //     algaeLiftMotor.set(m_PeriodicIO.algae_power);
       
-    }
+  //   }
 
-  }  
-  public void reset() {
-    liftRelativeEncoder.setPosition(0.0);
-  }
+  // }  
+  //public void reset() {
+  //  liftRelativeEncoder.setPosition(0.0);
+  //}
   public AlgaeState getState() {
     return m_PeriodicIO.state;
   }
@@ -208,6 +208,7 @@ public Command AlgaeOutake (double speed){
     SmartDashboard.putNumber("setLiftPower", power);
     m_PeriodicIO.is_algae_pos_control = false;
     m_PeriodicIO.algae_power = power;
+
   }
   public void goToAlgaeStow() {
     m_PeriodicIO.is_algae_pos_control = true;
