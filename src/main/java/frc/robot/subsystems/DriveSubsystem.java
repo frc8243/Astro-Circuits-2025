@@ -85,8 +85,8 @@ public class DriveSubsystem extends SubsystemBase {
         this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
         (speeds, feedforwards) -> driveRobotRelative(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
         new PPHolonomicDriveController( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-            new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
-            new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
+            new PIDConstants(5, 0.0, 0.2), // Translation PID constants
+            new PIDConstants(3, 0.0, 0.0) // Rotation PID constants
 
         ),
         config,
@@ -116,7 +116,7 @@ public class DriveSubsystem extends SubsystemBase {
             m_rearRight.getPosition()
         });
         SmartDashboard.putNumber("Gyro Heading", m_gyro.getYaw().getValueAsDouble());
-      
+       
   }
 
   /**

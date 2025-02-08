@@ -7,19 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "toReef"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.0
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "ReefToCoral"
+            "pathName": "Diagonal"
           }
         }
       ]

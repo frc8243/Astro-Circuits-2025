@@ -158,6 +158,11 @@ public class RobotContainer {
              () -> m_robotDrive.setX(),
              m_robotDrive));
 
+    driverButtonBinder.getButton("x", "Reset Gyro")
+    .whileTrue(new RunCommand(
+        () -> m_robotDrive.gyroReset(),
+            m_robotDrive));
+
     // operatorButtonBinder.getButton("x", "Coral Intake")
     //    .whileTrue(m_coralHandler.coralIntake(-0.2));
 
