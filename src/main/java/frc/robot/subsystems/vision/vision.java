@@ -22,7 +22,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.geometry.Pose2d;
+//import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -43,22 +43,22 @@ public class Vision extends SubsystemBase {
 
   private final NetworkTable limelightTable;
   private final DriveSubsystem driveSubsystem;
-  private boolean doRejectUpdate;
+  // private boolean doRejectUpdate;
   private final Field2d m_field = new Field2d();
   PIDController rotatePid = new PIDController(0.125, 0, 0);
   PIDController xPid = new PIDController(1, 0, 0.005);
   PIDController yPid = new PIDController(0.0605, 0, 0.0055);
 
-  private final AprilTagFieldLayout APRILTAGFIELDLAYOUT =
-      AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
-  private final Transform3d ROBOTTOCAM =
-      new Transform3d(
-          new Translation3d(0.5, 0.0, 0.5),
-          new Rotation3d(
-              0, 0,
-              0)); 
+  // private final AprilTagFieldLayout APRILTAGFIELDLAYOUT =
+  // //     AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
+  // // private final Transform3d ROBOTTOCAM =
+  // //     new Transform3d(
+  // //         new Translation3d(0.5, 0.0, 0.5),
+  // //         new Rotation3d(
+  // //             0, 0,
+  // //             0)); 
 
- public Pose2d limePose2d; 
+//  public Pose2d limePose2d; 
 
   /** Creates a new vision. */
   public Vision(DriveSubsystem driveSubsystem) {

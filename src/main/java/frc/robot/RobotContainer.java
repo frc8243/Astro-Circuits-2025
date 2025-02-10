@@ -92,21 +92,21 @@ public class RobotContainer {
       new Pose2d(3, 0, new Rotation2d(0)),
       config);
 
-  var thetaController = new ProfiledPIDController(
-      AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
-  thetaController.enableContinuousInput(-Math.PI, Math.PI);
+//   var thetaController = new ProfiledPIDController(
+//       AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
+//   thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-  SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-      exampleTrajectory,
-      m_robotDrive::getPose, // Functional interface to feed supplier
-      DriveConstants.kDriveKinematics,
+//   SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
+//       exampleTrajectory,
+//       m_robotDrive::getPose, // Functional interface to feed supplier
+//       DriveConstants.kDriveKinematics,
 
-      // Position controllers
-      new PIDController(AutoConstants.kPXController, 0, 0),
-      new PIDController(AutoConstants.kPYController, 0, 0),
-      thetaController,
-      m_robotDrive::setModuleStates,
-      m_robotDrive);
+//       // Position controllers
+//       new PIDController(AutoConstants.kPXController, 0, 0),
+//       new PIDController(AutoConstants.kPYController, 0, 0),
+//       thetaController,
+//       m_robotDrive::setModuleStates,
+//       m_robotDrive);
 
   // // Reset odometry to the starting pose of the trajectory.
   m_robotDrive.gyroReset();
