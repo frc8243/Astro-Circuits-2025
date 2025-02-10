@@ -4,8 +4,6 @@
 
 package frc.robot.commands;
 
-import javax.naming.LimitExceededException;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.vision.Vision;
@@ -16,7 +14,7 @@ public class TurnToTarget extends Command {
   public static final double kP = 0.01;
   private static final double tolerance = 1.0;
   
-  /** Creates a new TurnToAprilTag. */
+  /** Creates a new TurnToTarget. */
   public TurnToTarget(DriveSubsystem swerveDrive, Vision limelight) {
     this.swerveDrive = swerveDrive;
     this.limelight = limelight;
@@ -52,6 +50,6 @@ public class TurnToTarget extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;//limelight.isTargetVisible() && Math.abs(limelight.getTargetX()) < tolerance;
+    return limelight.isTargetVisible() && Math.abs(limelight.getTargetX()) < tolerance;
   }
 }

@@ -4,8 +4,6 @@
 
 package frc.robot.commands;
 
-import javax.naming.LimitExceededException;
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 //import edu.wpi.first.units.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -21,7 +19,7 @@ public class MoveToTarget extends Command {
   private double angleFromGround;
   private double distance;
   
-  /** Creates a new TurnToAprilTag. */
+  /** Creates a new MoveToTarget.*/
   public MoveToTarget(DriveSubsystem swerveDrive, Vision limelight) {
     this.swerveDrive = swerveDrive;
     this.limelight = limelight;

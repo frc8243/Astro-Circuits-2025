@@ -4,42 +4,32 @@
 
 package frc.robot;
 
+import java.util.List;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.PS4Controller.Button;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.MoveToTarget;
 import frc.robot.commands.TurnToTarget;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.Algae.AlgaeSubsystem;
-import frc.robot.subsystems.Algae.AlgaeWrist;
-import frc.robot.subsystems.Algae.AlgaeWrist.WristAngle;
-import frc.robot.subsystems.coral.coralHandler;
-import frc.robot.subsystems.elevator.elevator;
 import frc.robot.subsystems.vision.Vision;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import java.util.List;
-
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
 
 
 /*
@@ -62,6 +52,7 @@ public class RobotContainer {
  public static CommandXboxController m_operatorController = new CommandXboxController(OIConstants.kOperatorControllerPort);// port 1
  private ButtonBinder driverButtonBinder = new ButtonBinder(m_driverController);
  private ButtonBinder operatorButtonBinder = new ButtonBinder(m_operatorController);
+ //hello
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -92,21 +83,6 @@ public class RobotContainer {
       new Pose2d(3, 0, new Rotation2d(0)),
       config);
 
-  var thetaController = new ProfiledPIDController(
-      AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
-  thetaController.enableContinuousInput(-Math.PI, Math.PI);
-
-  SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-      exampleTrajectory,
-      m_robotDrive::getPose, // Functional interface to feed supplier
-      DriveConstants.kDriveKinematics,
-
-      // Position controllers
-      new PIDController(AutoConstants.kPXController, 0, 0),
-      new PIDController(AutoConstants.kPYController, 0, 0),
-      thetaController,
-      m_robotDrive::setModuleStates,
-      m_robotDrive);
 
   // // Reset odometry to the starting pose of the trajectory.
   m_robotDrive.gyroReset();

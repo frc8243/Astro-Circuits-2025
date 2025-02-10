@@ -1,8 +1,5 @@
 package frc.robot.subsystems.coral;
 
-import java.lang.module.Configuration;
-
-import com.revrobotics.ColorSensorV3;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkBase.ControlType;
@@ -14,16 +11,12 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
-import au.grapplerobotics.CanBridge;
+
 import au.grapplerobotics.ConfigurationFailedException;
 import au.grapplerobotics.LaserCan;
-import edu.wpi.first.math.trajectory.constraint.RectangularRegionConstraint;
-import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.RobotContainer;
 import frc.robot.Constants.NeoMotorConstants;
 
 public class coralHandler extends SubsystemBase {
@@ -56,36 +49,35 @@ public class coralHandler extends SubsystemBase {
   private static final SparkMaxConfig.IdleMode leftMotorIdleMode = SparkBaseConfig.IdleMode.kBrake;
   private static final SparkMaxConfig.IdleMode rightMotorIdleMode = SparkBaseConfig.IdleMode.kBrake;
 
+  @SuppressWarnings("unused")
   private final RelativeEncoder leftRelativeEncoder;
+  @SuppressWarnings("unused")
   private final RelativeEncoder rightRelativeEncoder;
 
   private final SparkClosedLoopController leftPidController;
+  @SuppressWarnings("unused")
   private final SparkClosedLoopController rightPidController;
 
-  //private final ColorSensorV3 colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
   private boolean hasCoral = false;
-   private LaserCan firstLaser;
-  // private LaserCan secondLaser;
-  /** Creates a new coral. */
+  
+  private LaserCan firstLaser;
+  
+  /** Creates a new coralHandler. */
   public coralHandler() {
+    rightSparkMax = new SparkMax(51,  MotorType.kBrushless);
     leftSparkMax = new SparkMax(52, MotorType.kBrushless); 
  
 
-     sparkMaxConfigLeft.inverted(leftEncoderInverted).idleMode(leftMotorIdleMode).smartCurrentLimit(NeoMotorConstants.NEOCurrentLimit);
-     sparkMaxConfigLeft.encoder.positionConversionFactor(leftEncoderPositionFactor)
-       .velocityConversionFactor(leftEncoderPositionFactor/60);
-     sparkMaxConfigLeft.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-       .pid(leftP, leftI, leftD, ClosedLoopSlot.kSlot1).outputRange(leftMinOutput, leftMaxOutput);
-
-      sparkMaxConfigRight.inverted(rightEncoderInverted).idleMode(rightMotorIdleMode).smartCurrentLimit(NeoMotorConstants.NEOCurrentLimit);
-      sparkMaxConfigRight.encoder.positionConversionFactor(rightEncoderPositionFactor)
-        .velocityConversionFactor(rightEncoderPositionFactor/60);
-      sparkMaxConfigRight.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-        .pid(rightP, rightI, rightD, ClosedLoopSlot.kSlot1).outputRange(rightMinOutput, rightMaxOutput);
-
-     
-    rightSparkMax = new SparkMax(51,  MotorType.kBrushless);
-
+    sparkMaxConfigLeft.inverted(leftEncoderInverted).idleMode(leftMotorIdleMode).smartCurrentLimit(NeoMotorConstants.NEOCurrentLimit);
+    sparkMaxConfigLeft.encoder.positionConversionFactor(leftEncoderPositionFactor)
+      .velocityConversionFactor(leftEncoderPositionFactor/60);
+    sparkMaxConfigLeft.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+      .pid(leftP, leftI, leftD, ClosedLoopSlot.kSlot1).outputRange(leftMinOutput, leftMaxOutput);
+    sparkMaxConfigRight.inverted(rightEncoderInverted).idleMode(rightMotorIdleMode).smartCurrentLimit(NeoMotorConstants.NEOCurrentLimit);
+    sparkMaxConfigRight.encoder.positionConversionFactor(rightEncoderPositionFactor)
+      .velocityConversionFactor(rightEncoderPositionFactor/60);
+    sparkMaxConfigRight.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+      .pid(rightP, rightI, rightD, ClosedLoopSlot.kSlot1).outputRange(rightMinOutput, rightMaxOutput);
 
     leftSparkMax.configure(sparkMaxConfigLeft, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     rightSparkMax.configure(sparkMaxConfigLeft, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -97,7 +89,7 @@ public class coralHandler extends SubsystemBase {
     rightPidController = rightSparkMax.getClosedLoopController();
     
      firstLaser=new LaserCan(10);
-    // secondLaser=new LaserCan(10);
+
      try {
        firstLaser.setRangingMode(LaserCan.RangingMode.SHORT);
        firstLaser.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 8 , 8));
@@ -105,24 +97,14 @@ public class coralHandler extends SubsystemBase {
      } catch (ConfigurationFailedException e) {
        System.out.println("Configuration failed " + e);
      }
-    // try{
-    // secondLaser.setRangingMode(LaserCan.RangingMode.SHORT);
-    //   secondLaser.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 16 , 16));
-    //   secondLaser.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
-    // } catch (ConfigurationFailedException e) {
-    //   System.out.println("Configuration failed " + e);
-    // }
-    
   }
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
   LaserCan.Measurement measurement1 = firstLaser.getMeasurement();
-  //LaserCan.Measurement measurement2 = secondLaser.getMeasurement();
+ 
 
 
-// if ( ( measurement1 !=null && measurement1.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT)) {
   if ( ( measurement1 !=null && measurement1.distance_mm < 50)) {
   
    System.out.println("the target is " + measurement1.distance_mm + "mm away!");
@@ -133,39 +115,18 @@ public class coralHandler extends SubsystemBase {
    System.out.println("no coral");
    hasCoral=false;
  }
-    //int proximity = colorSensor.getProximity();
+
      SmartDashboard.putBoolean("Sensor Eyes:",measurement1.status ==LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT);
      SmartDashboard.putNumber("sensor distance", measurement1.distance_mm); 
-    //System.out.println("Proximity: " + proximity);
-    
-    // Proximity is higher when the object is closer
-    // Proximity value was ~200 when PVC pipe was 2 inches away
-    // Proximity value was ~60-70 when nothing was in front of the sensor
-    //if (proximity > 100){
-    //RobotContainer.m_operatorController.setRumble(GenericHID.RumbleType.kLeftRumble, 0.7);  
-      //System.out.println("PVC visible");
-   // }
-    //else{
-      //RobotContainer.m_operatorController.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
-      //System.out.println("PVC not visible");
-    //}
+
     
     
   }
   public void setIntakeMotors (double speed){
-   // if(!hasCoral){
       leftSparkMax.set(speed);
-      rightSparkMax.set(-speed);
-    //}
-
-
-
-    //  else{
-    //    leftSparkMax.set(0);
-    //    rightSparkMax.set(0);
-    //  }
-    
+      rightSparkMax.set(-speed);    
   }
+
   /**
    * Moves Intake Motors when Detecting Coral
    * @param speed
@@ -183,11 +144,7 @@ public class coralHandler extends SubsystemBase {
      
    }
   public void pidSetIntakeMotors (double targetVelocity){
-    //if(!hasCoral){
       leftPidController.setReference(targetVelocity, ControlType.kVelocity, ClosedLoopSlot.kSlot1);
-      //rightPidController.setReference(targetVelocity, ControlType.kVelocity, ClosedLoopSlot.kSlot1);
-    //}
-    
   }
 
   public void setOutakeMotors (double speed){
@@ -201,37 +158,13 @@ public class coralHandler extends SubsystemBase {
     }
   }
   public void setOutakeBaseMotor (double speed){
-    //if(hasCoral){
       leftSparkMax.set(speed);
       rightSparkMax.set(-speed/2);
-    //}
-
   }
 
   public void stopMotors(){
     leftSparkMax.set(0);
-   // rightSparkMax.set(0);
   }
-
-  // private int getRed(){
-  //   return colorSensor.getRed();
-  // }
-
-  // private int getBlue(){
-  //   return colorSensor.getBlue();
-  // }
-
-  // private int getGreen(){
-  //   return colorSensor.getGreen();
-  // }
-
-
-  // public Command coralIntake (double speed){
-  //   return this.run(
-  //     ()->{setIntakeMotors(speed); 
-  //          System.out.println("Coral Intaking");}
-  //        ).finallyDo(interrupted->stopMotors()); 
-  // }
 
   public Command coralIntake (double velocity){
     return this.run(
@@ -258,5 +191,4 @@ public class coralHandler extends SubsystemBase {
         System.out.println("Coral Intaking");}
     );
   }
-
 }

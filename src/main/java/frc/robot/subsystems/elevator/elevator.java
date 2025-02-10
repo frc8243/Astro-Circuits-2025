@@ -26,7 +26,6 @@ import frc.robot.Constants;
 
 
 public class elevator extends SubsystemBase {
-  /** Creates a new elevator. */
 
   private PeriodicIO m_PeriodicIO;
   
@@ -71,25 +70,24 @@ public class elevator extends SubsystemBase {
   private static final SparkMaxConfig.IdleMode rightMotorIdleMode = SparkBaseConfig.IdleMode.kBrake;
   
   
-  
-    public elevator() {
-      m_PeriodicIO = new PeriodicIO();
-      leftSparkMax = new SparkMax(8, MotorType.kBrushless);  
-      rightSparkMax = new SparkMax(7,  MotorType.kBrushless);
+  /** Creates a new elevator. */
+  public elevator() {
+    m_PeriodicIO = new PeriodicIO();
+    leftSparkMax = new SparkMax(8, MotorType.kBrushless);  
+    rightSparkMax = new SparkMax(7,  MotorType.kBrushless);
+    sparkMaxConfigLeft.inverted(leftEncoderInverted).idleMode(leftMotorIdleMode);
+    sparkMaxConfigLeft.encoder.positionConversionFactor(leftEncoderPositionFactor)
+      .velocityConversionFactor(leftEncoderPositionFactor/60);
+    sparkMaxConfigLeft.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+      .pid(leftP, leftI, leftD, ClosedLoopSlot.kSlot0).outputRange(leftMinOutput, leftMaxOutput);
+   
+      sparkMaxConfigRight.inverted(rightEncoderInverted).idleMode(rightMotorIdleMode);
+    sparkMaxConfigRight.encoder.positionConversionFactor(rightEncoderPositionFactor)
+      .velocityConversionFactor(rightEncoderPositionFactor/60);
+    sparkMaxConfigRight.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+      .pid(rightP, rightI, rightD, ClosedLoopSlot.kSlot0).outputRange(rightMinOutput, rightMaxOutput);
 
-      sparkMaxConfigLeft.inverted(leftEncoderInverted).idleMode(leftMotorIdleMode);
-      sparkMaxConfigLeft.encoder.positionConversionFactor(leftEncoderPositionFactor)
-        .velocityConversionFactor(leftEncoderPositionFactor/60);
-      sparkMaxConfigLeft.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-        .pid(leftP, leftI, leftD, ClosedLoopSlot.kSlot0).outputRange(leftMinOutput, leftMaxOutput);
-     
-        sparkMaxConfigRight.inverted(rightEncoderInverted).idleMode(rightMotorIdleMode);
-      sparkMaxConfigRight.encoder.positionConversionFactor(rightEncoderPositionFactor)
-        .velocityConversionFactor(rightEncoderPositionFactor/60);
-      sparkMaxConfigRight.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-        .pid(rightP, rightI, rightD, ClosedLoopSlot.kSlot0).outputRange(rightMinOutput, rightMaxOutput);
-  
-  
+
 
     leftSparkMax.configure(sparkMaxConfigLeft, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     rightSparkMax.configure(sparkMaxConfigRight, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -100,10 +98,8 @@ public class elevator extends SubsystemBase {
 
     mProfile = new TrapezoidProfile(
       new TrapezoidProfile.Constraints(Constants.Elevator.kMaxVelocity, Constants.Elevator.kMaxAcceleration));
-
-
-    //goToElevatorStow();
   }
+
   public enum ElevatorState {
     NONE,
     STOW,
@@ -129,8 +125,6 @@ public class elevator extends SubsystemBase {
     SmartDashboard.putNumber("Elevator/Right Encoder", rightRelativeEncoder.getPosition());
     outputTelemetry();
     writePeriodicOutputs();
-    // This method will be called once per scheduler run
-
   }
 
 
@@ -174,7 +168,6 @@ public class elevator extends SubsystemBase {
   public void stop() {
     m_PeriodicIO.is_elevator_pos_control = false;
     m_PeriodicIO.elevator_power = 0.0;
-
     leftSparkMax.set(0.0);
   }
   
@@ -195,11 +188,9 @@ public class elevator extends SubsystemBase {
     SmartDashboard.putString("Elevator/State", "" + getState());
   }
 
-  
   public void reset() {
     leftRelativeEncoder.setPosition(0.0);
   }
-
 
   public ElevatorState getState() {
     return m_PeriodicIO.state;
@@ -270,8 +261,4 @@ public class elevator extends SubsystemBase {
     m_PeriodicIO.elevator_target = Constants.Elevator.kHighAlgaeHeight;
     m_PeriodicIO.state = ElevatorState.A2;
   }
-
-
-
-
 }
