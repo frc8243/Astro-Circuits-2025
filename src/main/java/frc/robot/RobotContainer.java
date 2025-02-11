@@ -62,6 +62,7 @@ public class RobotContainer {
  public static CommandXboxController m_operatorController = new CommandXboxController(OIConstants.kOperatorControllerPort);// port 1
  private ButtonBinder driverButtonBinder = new ButtonBinder(m_driverController);
  private ButtonBinder operatorButtonBinder = new ButtonBinder(m_operatorController);
+ public Pose2d  targetPose = new Pose2d(.6, .6, new Rotation2d());
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -158,7 +159,7 @@ public class RobotContainer {
              () -> m_robotDrive.setX(),
              m_robotDrive));
 
-    driverButtonBinder.getButton("x", "Reset Gyro")
+    driverButtonBinder.getButton("y", "Reset Gyro")
     .whileTrue(new RunCommand(
         () -> m_robotDrive.gyroReset(),
             m_robotDrive));
@@ -221,7 +222,7 @@ public class RobotContainer {
 //double 0.9 );
      driverButtonBinder.getButton("rightBumper", "Turn To Target").whileTrue(new TurnToTarget(m_robotDrive, m_vision));
      driverButtonBinder.getButton("leftBumper", "Move To Target").whileTrue(new MoveToTarget(m_robotDrive, m_vision));
-  
+     driverButtonBinder.getButton("x", "go to pose").whileTrue(new RunCommand(()-> m_robotDrive.goToPose(targetPose, false), m_robotDrive));
 
   }
 

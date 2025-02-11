@@ -13,6 +13,10 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -20,6 +24,8 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -47,6 +53,16 @@ public class DriveSubsystem extends SubsystemBase {
       DriveConstants.kRearRightDrivingCanId,
       DriveConstants.kRearRightTurningCanId,
       DriveConstants.kBackRightChassisAngularOffset);
+
+      private double velocityXMPS;
+      private double velocityYMPS;
+  private SwerveDrivePoseEstimator poseEstimator;
+  private PIDController xPid = new PIDController(5, 0, 0.2);
+  private PIDController yPid = new PIDController(5, 0, 0.2);
+  private PIDController anglePid = new PIDController(3,0,0);
+  private double kMaxSpeedMetersPerSecond = .2;
+  private double kMaxAngularSpeedRadiansPerSecond = .2;
+  
 
   // The gyro sensor
   public final Pigeon2 m_gyro = new Pigeon2(2,"rio");
@@ -85,7 +101,7 @@ public class DriveSubsystem extends SubsystemBase {
         this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
         (speeds, feedforwards) -> driveRobotRelative(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
         new PPHolonomicDriveController( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-            new PIDConstants(5, 0.0, 0.2), // Translation PID constants
+            new PIDConstants(4, 0.0, 0.2), // Translation PID constants
             new PIDConstants(3, 0.0, 0.0) // Rotation PID constants
 
         ),
@@ -177,6 +193,16 @@ public class DriveSubsystem extends SubsystemBase {
  //SmartDashboard.putNumber("") 
   
   }
+  public Rotation2d getYawPerSecond() {
+    return new Rotation2d(m_gyro.getAngularVelocityXWorld().getValueAsDouble());
+  }
+
+  public double getLinearSpeed() {
+    velocityXMPS = getRobotRelativeSpeeds().vxMetersPerSecond;
+    velocityYMPS = getRobotRelativeSpeeds().vyMetersPerSecond;
+    return Math.sqrt((Math.pow(velocityXMPS, 2) + Math.pow(velocityYMPS, 2)));
+  }
+
 
 
   /**
@@ -240,5 +266,29 @@ public class DriveSubsystem extends SubsystemBase {
     m_gyro.reset();
     m_gyro.setYaw(0);
 
+  }
+
+    public void goToPose(Pose2d target, boolean fieldOriented) {
+    Pose2d pose = getPose();
+    double xSpeed = MathUtil.clamp(xPid.calculate(pose.getX(), target.getX()), -1, 1) * kMaxSpeedMetersPerSecond;
+    double ySpeed = MathUtil.clamp(yPid.calculate(pose.getY(), target.getY()), -1, 1) * kMaxSpeedMetersPerSecond;
+    double vTheta = MathUtil
+        .clamp(anglePid.calculate(normalizeAngle(pose.getRotation().getDegrees()), normalizeAngle(target.getRotation().getDegrees())), -1, 1)
+        * kMaxAngularSpeedRadiansPerSecond;
+    this.drive(xSpeed, ySpeed, vTheta, fieldOriented);
+  }
+  private static double normalizeAngle(double angle) {
+    if (angle > 0) {
+      angle %= 360;
+      if (angle > 180) {
+        angle -= 360;
+      }
+    } else if (angle < 0) {
+      angle %= -360;
+      if (angle < -180) {
+        angle += 360;
+      }
+    }
+    return angle;
   }
 }
