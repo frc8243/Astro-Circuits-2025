@@ -4,6 +4,10 @@
 
 package frc.robot.subsystems;
 
+import java.util.HashMap;
+
+import org.ejml.dense.row.MatrixFeatures_CDRM;
+
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
@@ -31,8 +35,11 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.subsystems.vision.Vision;
 
 public class DriveSubsystem extends SubsystemBase {
+
+  
   // Create MAXSwerveModules
   private final MAXSwerveModule m_frontLeft = new MAXSwerveModule(
       DriveConstants.kFrontLeftDrivingCanId,
@@ -62,6 +69,10 @@ public class DriveSubsystem extends SubsystemBase {
   private PIDController anglePid = new PIDController(3,0,0);
   private double kMaxSpeedMetersPerSecond = .2;
   private double kMaxAngularSpeedRadiansPerSecond = .2;
+  
+  public Pose2d  targetPose = new Pose2d(.6, .6, new Rotation2d());
+
+  public HashMap<Integer, Pose2d[]> poses =  new HashMap<Integer, Pose2d[]>();
   
 
   // The gyro sensor
@@ -115,6 +126,8 @@ public class DriveSubsystem extends SubsystemBase {
         },
         this// Reference to this subsystem to set requirements
     );
+
+    poses.put(7,new Pose2d[]{ targetPose, targetPose});
       
     // Usage reporting for MAXSwerve template
     HAL.report(tResourceType.kResourceType_RobotDrive, tInstances.kRobotDriveSwerve_MaxSwerve);
@@ -268,7 +281,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   }
 
-    public void goToPose(Pose2d target, boolean fieldOriented) {
+    public void goToPose(Pose2d target, boolean fieldOriented, int aprilTag) {
     Pose2d pose = getPose();
     double xSpeed = MathUtil.clamp(xPid.calculate(pose.getX(), target.getX()), -1, 1) * kMaxSpeedMetersPerSecond;
     double ySpeed = MathUtil.clamp(yPid.calculate(pose.getY(), target.getY()), -1, 1) * kMaxSpeedMetersPerSecond;

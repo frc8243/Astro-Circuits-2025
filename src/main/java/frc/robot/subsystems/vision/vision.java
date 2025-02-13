@@ -13,6 +13,8 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import org.opencv.core.MatOfPoint3;
+
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.controller.PIDController;
@@ -30,6 +32,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.LimelightHelpers;
+import frc.robot.LimelightHelpers.RawFiducial;
 
 
 
@@ -43,6 +46,8 @@ public class Vision extends SubsystemBase {
 
   private final NetworkTable limelightTable;
   private final DriveSubsystem driveSubsystem;
+
+  public double lastAprilTag = 0;
   // private boolean doRejectUpdate;
   private final Field2d m_field = new Field2d();
   PIDController rotatePid = new PIDController(0.125, 0, 0);
@@ -96,6 +101,10 @@ public void setPipeline(int pipeline){
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    if(limelightTable.getEntry("tid").getDouble(0) != -1){
+      lastAprilTag = limelightTable.getEntry("tid").getDouble(0);
+    }
+    
+    System.out.println("april Tag: " + lastAprilTag);
   }
 }

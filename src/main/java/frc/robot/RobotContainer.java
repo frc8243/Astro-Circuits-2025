@@ -36,6 +36,8 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+
+import java.util.HashMap;
 import java.util.List;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -63,6 +65,11 @@ public class RobotContainer {
  private ButtonBinder driverButtonBinder = new ButtonBinder(m_driverController);
  private ButtonBinder operatorButtonBinder = new ButtonBinder(m_operatorController);
  public Pose2d  targetPose = new Pose2d(.6, .6, new Rotation2d());
+ public Pose2d targetRightPose = new Pose2d(-.6, -.6, new Rotation2d());
+
+ public HashMap<Double, Pose2d[]> poses =  new HashMap<Double, Pose2d[]>();
+
+ public int lastAprilTag = 0;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -70,6 +77,9 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
+
+    poses.put(7.0,new Pose2d[]{ targetPose, targetPose});
+    poses.put(1.0, new Pose2d[]{targetRightPose,targetRightPose});
 
     //NamedCommands.registerCommand("Outake Coral", m_coralHandler.coralOutake(0.2).withTimeout(5));
 
@@ -222,7 +232,7 @@ public class RobotContainer {
 //double 0.9 );
      driverButtonBinder.getButton("rightBumper", "Turn To Target").whileTrue(new TurnToTarget(m_robotDrive, m_vision));
      driverButtonBinder.getButton("leftBumper", "Move To Target").whileTrue(new MoveToTarget(m_robotDrive, m_vision));
-     driverButtonBinder.getButton("x", "go to pose").whileTrue(new RunCommand(()-> m_robotDrive.goToPose(targetPose, false), m_robotDrive));
+     driverButtonBinder.getButton("x", "go to pose").whileTrue(new RunCommand(()-> m_robotDrive.goToPose(poses.get(m_vision.lastAprilTag)[0], false, lastAprilTag), m_robotDrive));
 
   }
 
