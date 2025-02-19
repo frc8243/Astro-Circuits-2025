@@ -14,6 +14,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -67,6 +68,8 @@ public class RobotContainer {
  public Pose2d  targetPose = new Pose2d(.6, .6, new Rotation2d());
  public Pose2d targetRightPose = new Pose2d(-.6, -.6, new Rotation2d());
 
+ private final Field2d m_field = new Field2d();
+
  public HashMap<Double, Pose2d[]> poses =  new HashMap<Double, Pose2d[]>();
 
  public int lastAprilTag = 0;
@@ -102,6 +105,8 @@ public class RobotContainer {
       // End 3 meters straight ahead of where we started, facing forward
       new Pose2d(3, 0, new Rotation2d(0)),
       config);
+
+  
 
 //   var thetaController = new ProfiledPIDController(
 //       AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
@@ -232,7 +237,11 @@ public class RobotContainer {
 //double 0.9 );
      driverButtonBinder.getButton("rightBumper", "Turn To Target").whileTrue(new TurnToTarget(m_robotDrive, m_vision));
      driverButtonBinder.getButton("leftBumper", "Move To Target").whileTrue(new MoveToTarget(m_robotDrive, m_vision));
-     driverButtonBinder.getButton("x", "go to pose").whileTrue(new RunCommand(()-> m_robotDrive.goToPose(poses.get(m_vision.lastAprilTag)[0], false, lastAprilTag), m_robotDrive));
+     driverButtonBinder.getButton("x", "go to pose")
+     .whileTrue(
+        new RunCommand(
+          ()->
+            m_robotDrive.goToPose(m_robotDrive.poses.get(m_vision.lastAprilTag)[0], false, lastAprilTag), m_robotDrive));
 
   }
 

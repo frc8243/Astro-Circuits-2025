@@ -19,6 +19,7 @@ import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -30,10 +31,15 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+import frc.robot.LimelightHelpers;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.vision.Vision;
 
@@ -63,16 +69,19 @@ public class DriveSubsystem extends SubsystemBase {
 
       private double velocityXMPS;
       private double velocityYMPS;
-  private SwerveDrivePoseEstimator poseEstimator;
+  
   private PIDController xPid = new PIDController(5, 0, 0.2);
   private PIDController yPid = new PIDController(5, 0, 0.2);
   private PIDController anglePid = new PIDController(3,0,0);
   private double kMaxSpeedMetersPerSecond = .2;
   private double kMaxAngularSpeedRadiansPerSecond = .2;
-  
+
+
   public Pose2d  targetPose = new Pose2d(.6, .6, new Rotation2d());
 
-  public HashMap<Integer, Pose2d[]> poses =  new HashMap<Integer, Pose2d[]>();
+  public HashMap<Double, Pose2d[]> poses =  new HashMap<Double, Pose2d[]>();
+
+  public Field2d m_field = new Field2d();
   
 
   // The gyro sensor
@@ -88,6 +97,17 @@ public class DriveSubsystem extends SubsystemBase {
           m_rearLeft.getPosition(),
           m_rearRight.getPosition()
       });
+  
+      private SwerveDrivePoseEstimator m_poseEstimator = 
+        new SwerveDrivePoseEstimator(Constants.DriveConstants.kDriveKinematics, m_gyro.getRotation2d(),
+         new SwerveModulePosition[]{
+          m_frontLeft.getPosition(),
+          m_frontRight.getPosition(),
+          m_rearLeft.getPosition(),
+          m_rearLeft.getPosition()
+        }, new Pose2d(),
+        VecBuilder.fill(0.05,0.05, Units.degreesToRadians(5)),
+        VecBuilder.fill(0.5,0.5, Units.degreesToRadians(30)));
 
       public ChassisSpeeds getRobotRelativeSpeeds(){
         return DriveConstants.kDriveKinematics.toChassisSpeeds(m_frontLeft.getState(),m_frontRight.getState(), m_rearLeft.getState(), m_rearRight.getState());
@@ -98,6 +118,10 @@ public class DriveSubsystem extends SubsystemBase {
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
+
+    SmartDashboard.putData("Field", m_field);
+
+
 
         RobotConfig config = null;
 
@@ -127,7 +151,7 @@ public class DriveSubsystem extends SubsystemBase {
         this// Reference to this subsystem to set requirements
     );
 
-    poses.put(7,new Pose2d[]{ targetPose, targetPose});
+    poses.put(7.0,new Pose2d[]{ targetPose, targetPose});
       
     // Usage reporting for MAXSwerve template
     HAL.report(tResourceType.kResourceType_RobotDrive, tInstances.kRobotDriveSwerve_MaxSwerve);
@@ -144,8 +168,58 @@ public class DriveSubsystem extends SubsystemBase {
             m_rearLeft.getPosition(),
             m_rearRight.getPosition()
         });
+
+        m_poseEstimator.update(m_gyro.getRotation2d(), new SwerveModulePosition[]{
+          m_frontLeft.getPosition(),
+          m_frontRight.getPosition(),
+          m_rearLeft.getPosition(),
+          m_rearLeft.getPosition()
+        });
         SmartDashboard.putNumber("Gyro Heading", m_gyro.getYaw().getValueAsDouble());
        
+        
+    boolean useMegaTag2 = true;
+
+    boolean doRejectUpdate = false;
+    LimelightHelpers.PoseEstimate mt1;
+    if(!useMegaTag2){
+      mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
+    }
+    else{
+      LimelightHelpers.SetRobotOrientation(
+        "limelight", m_poseEstimator.
+         getEstimatedPosition().getRotation().getDegrees(),0 , 0, 0, 0,0);
+      mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");   
+      }
+    if(mt1.tagCount == 0 || (mt1.tagCount == 1 && mt1.rawFiducials.length == 1 && mt1.rawFiducials[0].ambiguity > 0.7)){
+      doRejectUpdate = true;
+    }
+    if(Math.abs(m_gyro.getAngularVelocityZWorld().getValueAsDouble()) > 500){
+      doRejectUpdate = true; 
+    }
+    if(Timer.getFPGATimestamp() - mt1.timestampSeconds > 0.2){
+      doRejectUpdate = true;
+    }
+    Pose2d visionPose = mt1.pose;
+    Pose2d currPose = m_poseEstimator.getEstimatedPosition();
+
+    if(visionPose.getTranslation().getDistance(currPose.getTranslation())>2.0){
+      doRejectUpdate = true;
+    }
+
+    if(!doRejectUpdate){
+      double xStd = 0.5;
+      double yStd = 0.5;
+      double thetaStd = (Math.abs(m_gyro.getAngularVelocityZWorld().getValueAsDouble()) < 100)?
+       Units.degreesToRadians(5):Units.degreesToRadians(30);
+      m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(xStd,yStd,thetaStd));
+      m_poseEstimator.addVisionMeasurement(visionPose,mt1.timestampSeconds);
+    }
+
+    m_field.setRobotPose(currPose);
+    SmartDashboard.putString("Pose", ""+getPose());
+    SmartDashboard.putBoolean("Do Reject", doRejectUpdate);
+
   }
 
   /**
@@ -154,7 +228,7 @@ public class DriveSubsystem extends SubsystemBase {
    * @return The pose.
    */
   public Pose2d getPose() {
-    return m_odometry.getPoseMeters();
+    return m_poseEstimator.getEstimatedPosition();
   }
 
   /**

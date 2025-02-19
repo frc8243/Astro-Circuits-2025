@@ -24,7 +24,7 @@ import au.grapplerobotics.CanBridge;
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
-  private final Field2d m_field = new Field2d();
+  
   public NetworkTable table;
 
   
@@ -55,7 +55,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    SmartDashboard.putData("Field", m_field);
+   
 
     //m_field.setRobotPose(m_robotContainer.m_robotDrive.m_odometry.getPoseMeters());
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled

@@ -71,13 +71,13 @@ public class coralHandler extends SubsystemBase {
     leftSparkMax = new SparkMax(52, MotorType.kBrushless); 
  
 
-     sparkMaxConfigLeft.inverted(leftEncoderInverted).idleMode(leftMotorIdleMode).smartCurrentLimit(NeoMotorConstants.NEOCurrentLimit);
+     sparkMaxConfigLeft.inverted(leftEncoderInverted).idleMode(leftMotorIdleMode).smartCurrentLimit(NeoMotorConstants.NEO550CurrentLimit);
      sparkMaxConfigLeft.encoder.positionConversionFactor(leftEncoderPositionFactor)
        .velocityConversionFactor(leftEncoderPositionFactor/60);
      sparkMaxConfigLeft.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
        .pid(leftP, leftI, leftD, ClosedLoopSlot.kSlot1).outputRange(leftMinOutput, leftMaxOutput);
 
-      sparkMaxConfigRight.inverted(rightEncoderInverted).idleMode(rightMotorIdleMode).smartCurrentLimit(NeoMotorConstants.NEOCurrentLimit);
+      sparkMaxConfigRight.inverted(rightEncoderInverted).idleMode(rightMotorIdleMode).smartCurrentLimit(NeoMotorConstants.NEO550CurrentLimit);
       sparkMaxConfigRight.encoder.positionConversionFactor(rightEncoderPositionFactor)
         .velocityConversionFactor(rightEncoderPositionFactor/60);
       sparkMaxConfigRight.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
