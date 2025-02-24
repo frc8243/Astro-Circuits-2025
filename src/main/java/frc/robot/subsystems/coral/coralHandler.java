@@ -64,7 +64,7 @@ public class coralHandler extends SubsystemBase {
 
   //private final ColorSensorV3 colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
   private boolean hasCoral = false;
-   private LaserCan firstLaser;
+  private LaserCan firstLaser;
   // private LaserCan secondLaser;
   /** Creates a new coral. */
   public coralHandler() {

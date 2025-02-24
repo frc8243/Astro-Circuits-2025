@@ -53,19 +53,19 @@ public class elevator extends SubsystemBase {
   private static final double leftEncoderPositionFactor = 1.12;
   private static final double rightEncoderPositionFactor = 1.12;
 
-  private static final double leftP = 0.3;
+  private static final double leftP = 0.4;
   private static final double leftI = 0;
   private static final double leftD = 0;
   //private static final double LeftFF = 1 / ;
-  private static final double leftMinOutput = -.5;
-  private static final double leftMaxOutput = .5;
+  private static final double leftMinOutput = -.8;
+  private static final double leftMaxOutput = .8;   
 
-  private static final double rightP = 0.3;
+  private static final double rightP = 0.4;
   private static final double rightI = 0;
   private static final double rightD = 0.001;
   //private static final double rightFF = 1.0;
-  private static final double rightMinOutput = -.5;
-  private static final double rightMaxOutput = .5;
+  private static final double rightMinOutput = -.8;
+  private static final double rightMaxOutput = .8;
 
   private static final SparkMaxConfig.IdleMode leftMotorIdleMode = SparkBaseConfig.IdleMode.kBrake;
   private static final SparkMaxConfig.IdleMode rightMotorIdleMode = SparkBaseConfig.IdleMode.kBrake;
@@ -127,6 +127,9 @@ public class elevator extends SubsystemBase {
   public void periodic() {
     SmartDashboard.putNumber("Elevator/Left Encoder", leftRelativeEncoder.getPosition());
     SmartDashboard.putNumber("Elevator/Right Encoder", rightRelativeEncoder.getPosition());
+    SmartDashboard.putNumber("Elevator/Position/CurrentRight", rightSparkMax.get());
+    SmartDashboard.putNumber("Elevator/Position/CurrentLeft", leftSparkMax.get());
+    SmartDashboard.putNumber("Elevator/Position/Elevator Power", m_PeriodicIO.elevator_power);
     outputTelemetry();
     writePeriodicOutputs();
     // This method will be called once per scheduler run
@@ -198,6 +201,7 @@ public class elevator extends SubsystemBase {
   
   public void reset() {
     leftRelativeEncoder.setPosition(0.0);
+    rightRelativeEncoder.setPosition(0.0);
   }
 
 

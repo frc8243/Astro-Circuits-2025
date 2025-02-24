@@ -34,7 +34,7 @@ public class AlgaeWrist extends SubsystemBase {
         kWristKV);
   private final SparkMaxConfig sparkMaxConfigWrist = new SparkMaxConfig();
   private final double wristEncoderPositionFactor = 1/154.166 * 2 * Math.PI;
-  private final double wristP = 0.2/(Math.PI/2);
+  private final double wristP = 0.6/(Math.PI/2);
   private final double wristI = 0;
   private final double wristD = 0;
   private final RelativeEncoder wristEncoder = algaeWristMotor.getEncoder();
@@ -46,16 +46,16 @@ public class AlgaeWrist extends SubsystemBase {
        sparkMaxConfigWrist.encoder.positionConversionFactor(wristEncoderPositionFactor)
          .velocityConversionFactor(wristEncoderPositionFactor/60);
        sparkMaxConfigWrist.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-         .pid(wristP, wristI, wristD, ClosedLoopSlot.kSlot1).outputRange(-.2, .2);
+         .pid(wristP, wristI, wristD, ClosedLoopSlot.kSlot1).outputRange(-.6, .6);
   
         algaeWristMotor.configure(sparkMaxConfigWrist, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
       }
     
       public enum WristAngle {
         NONE(Units.degreesToRadians(0)),
-        STOW(Units.degreesToRadians(-10)),
-        A1(Units.degreesToRadians(15.06)),
-        A2(Units.degreesToRadians(75)),
+        STOW(Units.degreesToRadians(10)),
+        A1(Units.degreesToRadians(-15.06)),
+        A2(Units.degreesToRadians(-75)),
         FLOOR(Units.degreesToRadians(-1)); //TODO: test this eventually
           
         private final double m_angle;

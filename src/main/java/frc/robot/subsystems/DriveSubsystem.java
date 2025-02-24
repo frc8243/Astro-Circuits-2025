@@ -14,6 +14,8 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
@@ -82,6 +84,8 @@ public class DriveSubsystem extends SubsystemBase {
   public HashMap<Double, Pose2d[]> poses =  new HashMap<Double, Pose2d[]>();
 
   public Field2d m_field = new Field2d();
+   private final AprilTagFieldLayout aprilTagsLayout =
+      AprilTagFields.k2025Reefscape.loadAprilTagLayoutField();
   
 
   // The gyro sensor
@@ -181,44 +185,55 @@ public class DriveSubsystem extends SubsystemBase {
     boolean useMegaTag2 = true;
 
     boolean doRejectUpdate = false;
-    LimelightHelpers.PoseEstimate mt1;
-    if(!useMegaTag2){
-      mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
-    }
-    else{
-      LimelightHelpers.SetRobotOrientation(
-        "limelight", m_poseEstimator.
-         getEstimatedPosition().getRotation().getDegrees(),0 , 0, 0, 0,0);
-      mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");   
-      }
-    if(mt1.tagCount == 0 || (mt1.tagCount == 1 && mt1.rawFiducials.length == 1 && mt1.rawFiducials[0].ambiguity > 0.7)){
-      doRejectUpdate = true;
-    }
-    if(Math.abs(m_gyro.getAngularVelocityZWorld().getValueAsDouble()) > 500){
-      doRejectUpdate = true; 
-    }
-    if(Timer.getFPGATimestamp() - mt1.timestampSeconds > 0.2){
-      doRejectUpdate = true;
-    }
-    Pose2d visionPose = mt1.pose;
-    Pose2d currPose = m_poseEstimator.getEstimatedPosition();
 
-    if(visionPose.getTranslation().getDistance(currPose.getTranslation())>2.0){
-      doRejectUpdate = true;
-    }
+    // LimelightHelpers.PoseEstimate mt1;
+    // if(!useMegaTag2){
+    //   mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
+      
+    // }
+    // else{
+    //   LimelightHelpers.SetRobotOrientation(
+    //     "limelight", m_poseEstimator.
+    //      getEstimatedPosition().getRotation().getDegrees(),0 , 0, 0, 0,0);
+    //   mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");   
+    //   }
+    // if(mt1.tagCount == 0  /*(mt1.tagCount == 1 && mt1.rawFiducials.length == 1 && mt1.rawFiducials[0].ambiguity > 0.7)*/){
+    //   //SmartDashboard.putString("Fiducial Ambiguity", ""+mt1.rawFiducials[0].ambiguity);
+    //   doRejectUpdate = true;
+    //   SmartDashboard.putString("Reject Reason", " tag count is 0 or fiducial ambiguity is greater than 0.7");
+    // }
+    // if(Math.abs(m_gyro.getAngularVelocityZWorld().getValueAsDouble()) > 500){
+    //   doRejectUpdate = true; 
+    //   SmartDashboard.putString("Reject Reason", "Angular velocity is over 500");
+    // }
+    // if(Timer.getFPGATimestamp() - mt1.timestampSeconds > 0.2){
+    //   doRejectUpdate = true;
+    //   SmartDashboard.putString("Reject Reason", "MegaTag Time is off by over .2 seconds");
+    // }
+    // Pose2d visionPose = mt1.pose;
+    // Pose2d currPose = m_poseEstimator.getEstimatedPosition();
 
-    if(!doRejectUpdate){
-      double xStd = 0.5;
-      double yStd = 0.5;
-      double thetaStd = (Math.abs(m_gyro.getAngularVelocityZWorld().getValueAsDouble()) < 100)?
-       Units.degreesToRadians(5):Units.degreesToRadians(30);
-      m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(xStd,yStd,thetaStd));
-      m_poseEstimator.addVisionMeasurement(visionPose,mt1.timestampSeconds);
-    }
+    // if(visionPose.getTranslation().getDistance(currPose.getTranslation())>2.0){
+    //   doRejectUpdate = true;
+    //   SmartDashboard.putString("Reject Reason", "currPose greater than 2 from vision pose");
+    // }
 
-    m_field.setRobotPose(currPose);
-    SmartDashboard.putString("Pose", ""+getPose());
-    SmartDashboard.putBoolean("Do Reject", doRejectUpdate);
+    // if(!doRejectUpdate){
+    //   SmartDashboard.putString("Reject Reason", "None");
+    //   double xStd = 0.5;
+    //   double yStd = 0.5;
+    //   double thetaStd = (Math.abs(m_gyro.getAngularVelocityZWorld().getValueAsDouble()) < 100)?
+    //    Units.degreesToRadians(5):Units.degreesToRadians(30);
+    //   m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(xStd,yStd,thetaStd));
+    //   m_poseEstimator.addVisionMeasurement(visionPose,mt1.timestampSeconds);
+    // }
+
+    // m_field.setRobotPose(currPose);
+    // SmartDashboard.putString("Angular Velocity", ""+m_gyro.getAngularVelocityZWorld().getValueAsDouble());
+    // SmartDashboard.putString("Pose", ""+getPose());
+    // SmartDashboard.putBoolean("Do Reject", doRejectUpdate);
+    // SmartDashboard.putString("Fiducial Length", ""+mt1.rawFiducials.length);
+    
 
   }
 
@@ -230,6 +245,8 @@ public class DriveSubsystem extends SubsystemBase {
   public Pose2d getPose() {
     return m_poseEstimator.getEstimatedPosition();
   }
+
+
 
   /**
    * Resets the odometry to the specified pose.
@@ -355,7 +372,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   }
 
-    public void goToPose(Pose2d target, boolean fieldOriented, int aprilTag) {
+    public void goToPose(Pose2d target, boolean fieldOriented) {
     Pose2d pose = getPose();
     double xSpeed = MathUtil.clamp(xPid.calculate(pose.getX(), target.getX()), -1, 1) * kMaxSpeedMetersPerSecond;
     double ySpeed = MathUtil.clamp(yPid.calculate(pose.getY(), target.getY()), -1, 1) * kMaxSpeedMetersPerSecond;
