@@ -178,7 +178,7 @@ public class RobotContainer {
              () -> m_robotDrive.setX(),
              m_robotDrive));
 
-    driverButtonBinder.getButton("y", "Reset Gyro")
+    driverButtonBinder.getButton("start", "Reset Gyro")
     .whileTrue(new RunCommand(
         () -> m_robotDrive.gyroReset(),
             m_robotDrive));
@@ -188,12 +188,14 @@ public class RobotContainer {
 
     operatorButtonBinder.getButton("a", "Coral Intake")
        .whileTrue(m_coralHandler.coralIntake(-0.2));
+       
+    operatorButtonBinder.getButton("b", "Coral Outake")
+      .whileTrue(m_coralHandler.coralIntake(0.2));
 
-      operatorButtonBinder.getButton("leftBumper", "Coral Level 1")
+      operatorButtonBinder.getButton("leftTrigger", "Coral Base Outake")
       .whileTrue(m_coralHandler.coralBaseOutake(0.2));
 
-      operatorButtonBinder.getButton("b", "Coral Outake")
-       .whileTrue(m_coralHandler.coralIntake(0.2));
+
 
       operatorButtonBinder.getButton("x", "Algae Intake")
       .whileTrue(m_AlgaeSubsystem.AlgaeIntake(-0.2)).onFalse(m_AlgaeSubsystem.AlgaeIntake(0));
@@ -201,43 +203,32 @@ public class RobotContainer {
       operatorButtonBinder.getButton("y", "Algae outtake")
      .whileTrue(m_AlgaeSubsystem.AlgaeIntake(0.2)).onFalse(m_AlgaeSubsystem.AlgaeIntake(0));
 
-    driverButtonBinder.getButton("povLeft", "Go to L2")
+
+
+    operatorButtonBinder.getButton("povLeft", "Go to L2")
     .whileTrue(m_elevator.goToLiftL2Command());
 
-    driverButtonBinder.getButton("povRight", "Go to L3")
+    operatorButtonBinder.getButton("povRight", "Go to L3")
     .whileTrue(m_elevator.goToLiftL3Command());
 
-    driverButtonBinder.getButton("povUp", "Go to L4")
+    operatorButtonBinder.getButton("povUp", "Go to L4")
     .whileTrue(m_elevator.goToLiftL4Command());
 
-
-    driverButtonBinder.getButton("povDown", "Go to bottom")
+    operatorButtonBinder.getButton("povDown", "Go to bottom")
     .whileTrue(m_elevator.goToLiftStowCommand());
 
- operatorButtonBinder.getButton("povUp", "Wrist to A1")
+    driverButtonBinder.getButton("povLeft", "Wrist to A1")
      .whileTrue(m_Algaewrist.goToWristAngleCommand(WristAngle.A1));
 
-//  operatorButtonBinder.getButton("rBumper", "Wrist to A2")
-//      .whileTrue(m_Algaewrist.goToWristAngleCommand(WristAngle.A2));
+    driverButtonBinder.getButton("povUp", "Wrist to Stow")
+        .whileTrue(m_Algaewrist.goToWristAngleCommand(WristAngle.STOW));
 
-  operatorButtonBinder.getButton("povLeft", "Wrist to Stow")
-      .whileTrue(m_Algaewrist.goToWristAngleCommand(WristAngle.STOW));
+    driverButtonBinder.getButton("povRight", "Wrist to A2")
+        .whileTrue(m_Algaewrist.goToWristAngleCommand(WristAngle.A2));
 
-  operatorButtonBinder.getButton("povRight", "Wrist to A2")
-      .whileTrue(m_Algaewrist.goToWristAngleCommand(WristAngle.A2));
 
-// // operatorButtonBinder.getButton("y", "algae Intake")
-// //     .whileTrue(m_AlgaeSubsystem.AlgaeIntake(-.2));
-// operatorButtonBinder.getButton("povUp", "Algae Outake")
-//     .whileTrue(m_AlgaeSubsystem.AlgaeOutake(0.2));
-//      operatorButtonBinder.getButton("povUp", "Go to L4")
-//      .whileTrue(m_elevator.goToLiftL4Command());
-    // m_operatorController.a().whileTrue(m_AlgaeSubsystem.AlgaeIntake(0.2));
-    // m_operatorController.b().whileTrue(m_AlgaeSubsystem.AlgaeOutake(.2));
-    //m_operatorController.rightBumper().whileTrue
-    //m_operatorController.leftBumper().whileTrue
-//public void setRumble(GenericHID.RumbleType leftRumble,
-//double 0.9 );
+
+        
     //  driverButtonBinder.getButton("rightBumper", "Turn To Target").whileTrue(new TurnToTarget(m_robotDrive, m_vision));
     //  driverButtonBinder.getButton("leftBumper", "Move To Target").whileTrue(new MoveToTarget(m_robotDrive, m_vision));
      driverButtonBinder.getButton("rightBumper", "go to pose")
