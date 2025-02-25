@@ -87,6 +87,7 @@ public class PoseMaps {
                 aprilTagsLayout.getTagPose((int)value).get().getY(),
                 new Rotation2d(aprilTagsLayout.getTagPose((int)value).get().getRotation().getZ())));
         }
+        System.out.println(poses);
         return poses;
     }
     /**
@@ -112,7 +113,7 @@ public class PoseMaps {
             xBot = (xAprilTag + thetaCos * coralOffset) + 
             Math.cos((Math.PI/2) + plainTheta) *  Units.inchesToMeters(18.5);
 
-            yBot = (xAprilTag + thetaSin * coralOffset) + 
+            yBot = (yAprilTag + thetaSin * coralOffset) + 
             Math.sin((Math.PI/2) + plainTheta) *  Units.inchesToMeters(18.5);
 
             thetaBot = plainTheta - Math.PI;
@@ -123,7 +124,7 @@ public class PoseMaps {
             xBot = (xAprilTag - thetaCos * coralOffset) + 
             Math.cos((Math.PI/2) + plainTheta) *  Units.inchesToMeters(18.5);
 
-            yBot = (xAprilTag - thetaSin * coralOffset) + 
+            yBot = (yAprilTag - thetaSin * coralOffset) + 
             Math.sin((Math.PI/2) + plainTheta) *  Units.inchesToMeters(18.5);
 
             thetaBot = plainTheta - Math.PI;
@@ -134,6 +135,9 @@ public class PoseMaps {
         }
 
         Pose2d botPose2d = new Pose2d(xBot, yBot, new Rotation2d(thetaBot));
+        System.out.println("///////////////////////////////////////");
+        System.out.println(botPose2d);
+        System.out.println("///////////////////////////////////////");
         return botPose2d;
     }
 }

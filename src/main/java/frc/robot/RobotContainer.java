@@ -84,6 +84,8 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
     m_poseMaps.setHashMap();
+    m_poseMaps.getPose2d(7.0, Direction.LEFT);
+    m_poseMaps.getPose2d(7.0, Direction.RIGHT);
     
     poses.put(7.0,new Pose2d[]{ targetPose, targetPose});
     poses.put(1.0, new Pose2d[]{targetRightPose,targetRightPose});
@@ -228,20 +230,20 @@ public class RobotContainer {
 
 
 
-        
+
     //  driverButtonBinder.getButton("rightBumper", "Turn To Target").whileTrue(new TurnToTarget(m_robotDrive, m_vision));
     //  driverButtonBinder.getButton("leftBumper", "Move To Target").whileTrue(new MoveToTarget(m_robotDrive, m_vision));
-     driverButtonBinder.getButton("rightBumper", "go to pose")
-     .whileTrue(
-        new RunCommand(
-          ()->
-            m_robotDrive.goToPose(m_poseMaps.getPose2d(lastAprilTag, Direction.RIGHT), false), m_robotDrive));
+    //  driverButtonBinder.getButton("rightBumper", "go to pose")
+    //  .whileTrue(
+    //     new RunCommand(
+    //       ()->
+    //         m_robotDrive.goToPose(m_poseMaps.getPose2d(lastAprilTag, Direction.RIGHT), false), m_robotDrive));
     
-    driverButtonBinder.getButton("leftBumper", "go to pose")
-    .whileTrue(
-       new RunCommand(
-         ()->
-           m_robotDrive.goToPose(m_poseMaps.getPose2d(lastAprilTag, Direction.LEFT), false), m_robotDrive));
+    // driverButtonBinder.getButton("leftBumper", "go to pose")
+    // .whileTrue(
+    //    new RunCommand(
+    //      ()->
+    //        m_robotDrive.goToPose(m_poseMaps.getPose2d(lastAprilTag, Direction.LEFT), false), m_robotDrive));
   }
 
   /**

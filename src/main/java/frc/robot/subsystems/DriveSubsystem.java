@@ -295,6 +295,7 @@ public class DriveSubsystem extends SubsystemBase {
  //SmartDashboard.putNumber("")   
  //SmartDashboard.putNumber("") 
  //SmartDashboard.putNumber("") 
+ SmartDashboard.putBoolean("isFieldOriented", fieldRelative);
   
   }
   public Rotation2d getYawPerSecond() {
