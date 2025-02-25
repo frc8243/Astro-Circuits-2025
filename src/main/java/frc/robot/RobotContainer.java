@@ -155,7 +155,7 @@ public class RobotContainer {
 
       m_coralHandler.setDefaultCommand(
         new RunCommand(
-            () -> m_coralHandler.setAutoIntakeMotors(0.15)
+            () -> m_coralHandler.setAutoIntakeMotors(0)
             , m_coralHandler));
         m_AlgaeSubsystem.setDefaultCommand(
             new RunCommand(
@@ -194,8 +194,8 @@ public class RobotContainer {
     operatorButtonBinder.getButton("b", "Coral Outake")
       .whileTrue(m_coralHandler.coralIntake(0.2));
 
-      operatorButtonBinder.getButton("leftTrigger", "Coral Base Outake")
-      .whileTrue(m_coralHandler.coralBaseOutake(0.2));
+      operatorButtonBinder.getButton("leftBumper", "Coral Base Outake")
+      .whileTrue(m_coralHandler.coralBaseOutake(0.25));
 
 
 

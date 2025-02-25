@@ -53,9 +53,9 @@ public class AlgaeWrist extends SubsystemBase {
     
       public enum WristAngle {
         NONE(Units.degreesToRadians(0)),
-        STOW(Units.degreesToRadians(10)),
+        STOW(Units.degreesToRadians(-5)),
         A1(Units.degreesToRadians(-15.06)),
-        A2(Units.degreesToRadians(-75)),
+        A2(Units.degreesToRadians(-170)),
         FLOOR(Units.degreesToRadians(-1)); //TODO: test this eventually
           
         private final double m_angle;

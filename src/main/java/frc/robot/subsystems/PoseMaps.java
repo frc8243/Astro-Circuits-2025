@@ -111,10 +111,10 @@ public class PoseMaps {
         
         if(direction == Direction.RIGHT){
             xBot = (xAprilTag + thetaCos * coralOffset) + 
-            Math.cos((Math.PI/2) + plainTheta) *  Units.inchesToMeters(18.5);
+            Math.cos(-(Math.PI/2) + plainTheta) *  Units.inchesToMeters(18.5);
 
             yBot = (yAprilTag + thetaSin * coralOffset) + 
-            Math.sin((Math.PI/2) + plainTheta) *  Units.inchesToMeters(18.5);
+            Math.sin(-(Math.PI/2) + plainTheta) *  Units.inchesToMeters(18.5);
 
             thetaBot = plainTheta - Math.PI;
             SmartDashboard.putString("Direction Directing", "Right");
@@ -122,10 +122,10 @@ public class PoseMaps {
         }   
         else if(direction == Direction.LEFT){
             xBot = (xAprilTag - thetaCos * coralOffset) + 
-            Math.cos((Math.PI/2) + plainTheta) *  Units.inchesToMeters(18.5);
+            Math.cos(-(Math.PI/2) + plainTheta) *  Units.inchesToMeters(18.5);
 
             yBot = (yAprilTag - thetaSin * coralOffset) + 
-            Math.sin((Math.PI/2) + plainTheta) *  Units.inchesToMeters(18.5);
+            Math.sin(-(Math.PI/2) + plainTheta) *  Units.inchesToMeters(18.5);
 
             thetaBot = plainTheta - Math.PI;
             SmartDashboard.putString("Direction Directing", "Left");
