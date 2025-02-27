@@ -67,9 +67,10 @@ public class Vision extends SubsystemBase {
 
   /** Creates a new vision. */
   public Vision(DriveSubsystem driveSubsystem) {
-     limelightTable = NetworkTableInstance.getDefault().getTable("limelight");
+     limelightTable = NetworkTableInstance.getDefault().getTable("");
+     SmartDashboard.putString("limelightTable/tx", ""+limelightTable.getEntry("tid").getDouble(0.0));
     SmartDashboard.putString("Limelight Camera Feed", "http://limelight.local:5800/stream.mjpg");
-    int[] validIDs = {1,7,8};
+    int[] validIDs = {1,7,8,16};
     LimelightHelpers.SetFiducialIDFiltersOverride("limelight", validIDs);
     this.driveSubsystem = driveSubsystem;
   }

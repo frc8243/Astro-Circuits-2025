@@ -60,7 +60,7 @@ public class RobotContainer {
   private final coralHandler m_coralHandler = new coralHandler();
   public final elevator m_elevator = new elevator();
   public final PoseMaps m_poseMaps = new PoseMaps();
-  //private final Vision m_vision = new Vision(m_robotDrive);
+  private final Vision m_vision = new Vision(m_robotDrive);
   private final AlgaeSubsystem m_AlgaeSubsystem = new AlgaeSubsystem();
   public final AlgaeWrist m_Algaewrist = new AlgaeWrist();
   // The driver's controller
@@ -217,7 +217,7 @@ public class RobotContainer {
     .whileTrue(m_elevator.goToLiftL4Command());
 
     operatorButtonBinder.getButton("povDown", "Go to bottom")
-    .whileTrue(m_elevator.goToLiftStowCommand());
+    .whileTrue(m_elevator.goToLiftStoommand());
 
     driverButtonBinder.getButton("povLeft", "Wrist to A1")
      .whileTrue(m_Algaewrist.goToWristAngleCommand(WristAngle.A1));
@@ -233,11 +233,11 @@ public class RobotContainer {
 
     //  driverButtonBinder.getButton("rightBumper", "Turn To Target").whileTrue(new TurnToTarget(m_robotDrive, m_vision));
     //  driverButtonBinder.getButton("leftBumper", "Move To Target").whileTrue(new MoveToTarget(m_robotDrive, m_vision));
-    //  driverButtonBinder.getButton("rightBumper", "go to pose")
-    //  .whileTrue(
-    //     new RunCommand(
-    //       ()->
-    //         m_robotDrive.goToPose(m_poseMaps.getPose2d(lastAprilTag, Direction.RIGHT), false), m_robotDrive));
+     driverButtonBinder.getButton("rightBumper", "go to pose")
+     .whileTrue(
+        new RunCommand(
+          ()->
+            m_robotDrive.goToPose(m_poseMaps.getPose2d(lastAprilTag, Direction.RIGHT), false), m_robotDrive));
     
     // driverButtonBinder.getButton("leftBumper", "go to pose")
     // .whileTrue(

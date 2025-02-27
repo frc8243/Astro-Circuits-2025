@@ -113,7 +113,7 @@ public final class Constants {
     public static final double kMaxAcceleration = 35; //TODO: FIND WHAT THIS IS
 
     public static final double kStowHeight = 0;
-    public static final double kL2Height = 10;
+    public static final double kL2Height = 12;
     public static final double kL3Height = 32.14;
     public static final double kL4Height = 59;
     public static final double kMaxHeight = 56.2;

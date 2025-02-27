@@ -182,20 +182,20 @@ public class DriveSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Gyro Heading", m_gyro.getYaw().getValueAsDouble());
        
         
-    boolean useMegaTag2 = true;
+    // boolean useMegaTag2 = true;
 
-    boolean doRejectUpdate = false;
+    // boolean doRejectUpdate = false;
 
     // LimelightHelpers.PoseEstimate mt1;
     // if(!useMegaTag2){
-    //   mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
+    //   mt1 = LimelightHelpers.getBotPoseEstimate_wpiRed("limelight");
       
     // }
     // else{
     //   LimelightHelpers.SetRobotOrientation(
     //     "limelight", m_poseEstimator.
     //      getEstimatedPosition().getRotation().getDegrees(),0 , 0, 0, 0,0);
-    //   mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");   
+    //   mt1 = LimelightHelpers.getBotPoseEstimate_wpiRed_MegaTag2("limelight");   
     //   }
     // if(mt1.tagCount == 0  /*(mt1.tagCount == 1 && mt1.rawFiducials.length == 1 && mt1.rawFiducials[0].ambiguity > 0.7)*/){
     //   //SmartDashboard.putString("Fiducial Ambiguity", ""+mt1.rawFiducials[0].ambiguity);

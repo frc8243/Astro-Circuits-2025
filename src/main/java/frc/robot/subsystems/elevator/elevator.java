@@ -180,6 +180,29 @@ public class elevator extends SubsystemBase {
 
     leftSparkMax.set(0.0);
   }
+  public void goUpFunction(double speed){
+    m_PeriodicIO.is_elevator_pos_control = false;
+    m_PeriodicIO.elevator_power = speed;
+  }
+  public void goDownFunction(double speed){
+    m_PeriodicIO.is_elevator_pos_control = false;
+    m_PeriodicIO.elevator_power = -speed;
+  }
+  public Command goUp (double velocity){
+    return this.run(
+      ()->{goUpFunction(velocity); 
+        System.out.println("Elevator Up");}
+    );
+  }
+  public Command goDown (double velocity){
+    return this.run(
+      ()->{goDownFunction(velocity); 
+        System.out.println("Elevator Down");}
+    );
+  }
+  
+
+
   
   public void outputTelemetry() {
     SmartDashboard.putNumber("Elevator/Position/Current", leftRelativeEncoder.getPosition());

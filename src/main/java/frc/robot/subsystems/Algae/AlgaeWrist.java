@@ -56,7 +56,7 @@ public class AlgaeWrist extends SubsystemBase {
         STOW(Units.degreesToRadians(-5)),
         A1(Units.degreesToRadians(-15.06)),
         A2(Units.degreesToRadians(-170)),
-        FLOOR(Units.degreesToRadians(-1)); //TODO: test this eventually
+        FLOOR(Units.degreesToRadians(-150)); //TODO: test this eventually
           
         private final double m_angle;
           WristAngle(double angle) {
@@ -92,6 +92,26 @@ public class AlgaeWrist extends SubsystemBase {
           System.out.println("Move Wrist to "  + angleEnum.toString());}
       );
     }
+    public void goUpFunction(double velocity){
+      algaeWristMotor.set(velocity);
+    }
+    public void goDownFunction(double velocity){
+      algaeWristMotor.set(velocity);
+    }
+    public Command algaeGoUp (double velocity){
+      return this.run(
+        ()->{goUpFunction(velocity); 
+          System.out.println("Algae Up");}
+      );
+    }
+    public Command algaeGoDown (double velocity){
+      return this.run(
+        ()->{goDownFunction(velocity); 
+          System.out.println("Algae down");}
+      );
+    }
+  
+  
     public void stop() {
   
 
