@@ -67,11 +67,11 @@ public class Vision extends SubsystemBase {
 
   /** Creates a new vision. */
   public Vision(DriveSubsystem driveSubsystem) {
-     limelightTable = NetworkTableInstance.getDefault().getTable("");
-     SmartDashboard.putString("limelightTable/tx", ""+limelightTable.getEntry("tid").getDouble(0.0));
-    SmartDashboard.putString("Limelight Camera Feed", "http://limelight.local:5800/stream.mjpg");
+     limelightTable = NetworkTableInstance.getDefault().getTable("limelight");
+    // SmartDashboard.putString("limelightTable/tx", ""+limelightTable.getEntry("tid").getDouble(0.0));
+   // SmartDashboard.putString("Limelight Camera Feed", "http://limelight.local:5800/stream.mjpg");
     int[] validIDs = {1,7,8,16};
-    LimelightHelpers.SetFiducialIDFiltersOverride("limelight", validIDs);
+    //LimelightHelpers.SetFiducialIDFiltersOverride("limelight", validIDs);
     this.driveSubsystem = driveSubsystem;
   }
 
@@ -106,6 +106,6 @@ public void setPipeline(int pipeline){
       lastAprilTag = limelightTable.getEntry("tid").getDouble(0);
     }
     
-    System.out.println("april Tag: " + lastAprilTag);
+    System.out.println("april Tag: " + lastAprilTag + limelightTable.getEntry("tx").getDouble(0));
   }
 }

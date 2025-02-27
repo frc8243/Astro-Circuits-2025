@@ -23,6 +23,8 @@ import au.grapplerobotics.CanBridge;
  */
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
+  
+ private final Field2d m_field = new Field2d();
 
   
   public NetworkTable table;
@@ -57,7 +59,7 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
    
 
-    //m_field.setRobotPose(m_robotContainer.m_robotDrive.m_odometry.getPoseMeters());
+  m_field.setRobotPose(m_robotContainer.m_robotDrive.m_poseEstimator.getEstimatedPosition());
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
@@ -68,8 +70,8 @@ public class Robot extends TimedRobot {
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
-    m_robotContainer.m_elevator.stop();
-    m_robotContainer.m_Algaewrist.stop();
+    // m_robotContainer.m_elevator.stop();
+    // m_robotContainer.m_Algaewrist.stop();
   }
 
   @Override

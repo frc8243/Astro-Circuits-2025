@@ -102,7 +102,7 @@ public class DriveSubsystem extends SubsystemBase {
           m_rearRight.getPosition()
       });
   
-      private SwerveDrivePoseEstimator m_poseEstimator = 
+      public SwerveDrivePoseEstimator m_poseEstimator = 
         new SwerveDrivePoseEstimator(Constants.DriveConstants.kDriveKinematics, m_gyro.getRotation2d(),
          new SwerveModulePosition[]{
           m_frontLeft.getPosition(),
@@ -173,7 +173,7 @@ public class DriveSubsystem extends SubsystemBase {
             m_rearRight.getPosition()
         });
 
-        m_poseEstimator.update(m_gyro.getRotation2d(), new SwerveModulePosition[]{
+      m_poseEstimator.update(m_gyro.getRotation2d(), new SwerveModulePosition[]{
           m_frontLeft.getPosition(),
           m_frontRight.getPosition(),
           m_rearLeft.getPosition(),
@@ -182,57 +182,57 @@ public class DriveSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Gyro Heading", m_gyro.getYaw().getValueAsDouble());
        
         
-    // boolean useMegaTag2 = true;
+    boolean useMegaTag2 = true;
 
-    // boolean doRejectUpdate = false;
+    boolean doRejectUpdate = false;
 
-    // LimelightHelpers.PoseEstimate mt1;
-    // if(!useMegaTag2){
-    //   mt1 = LimelightHelpers.getBotPoseEstimate_wpiRed("limelight");
+    LimelightHelpers.PoseEstimate mt1;
+    if(!useMegaTag2){
+      mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
       
-    // }
-    // else{
-    //   LimelightHelpers.SetRobotOrientation(
-    //     "limelight", m_poseEstimator.
-    //      getEstimatedPosition().getRotation().getDegrees(),0 , 0, 0, 0,0);
-    //   mt1 = LimelightHelpers.getBotPoseEstimate_wpiRed_MegaTag2("limelight");   
-    //   }
-    // if(mt1.tagCount == 0  /*(mt1.tagCount == 1 && mt1.rawFiducials.length == 1 && mt1.rawFiducials[0].ambiguity > 0.7)*/){
-    //   //SmartDashboard.putString("Fiducial Ambiguity", ""+mt1.rawFiducials[0].ambiguity);
-    //   doRejectUpdate = true;
-    //   SmartDashboard.putString("Reject Reason", " tag count is 0 or fiducial ambiguity is greater than 0.7");
-    // }
-    // if(Math.abs(m_gyro.getAngularVelocityZWorld().getValueAsDouble()) > 500){
-    //   doRejectUpdate = true; 
-    //   SmartDashboard.putString("Reject Reason", "Angular velocity is over 500");
-    // }
-    // if(Timer.getFPGATimestamp() - mt1.timestampSeconds > 0.2){
-    //   doRejectUpdate = true;
-    //   SmartDashboard.putString("Reject Reason", "MegaTag Time is off by over .2 seconds");
-    // }
-    // Pose2d visionPose = mt1.pose;
-    // Pose2d currPose = m_poseEstimator.getEstimatedPosition();
+    }
+    else{
+      LimelightHelpers.SetRobotOrientation(
+        "limelight", m_poseEstimator.
+         getEstimatedPosition().getRotation().getDegrees(),0 , 0, 0, 0,0);
+      mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");   
+      }
+    if(mt1.tagCount == 0  /*(mt1.tagCount == 1 && mt1.rawFiducials.length == 1 && mt1.rawFiducials[0].ambiguity > 0.7)*/){
+      //SmartDashboard.putString("Fiducial Ambiguity", ""+mt1.rawFiducials[0].ambiguity);
+      doRejectUpdate = true;
+      SmartDashboard.putString("Reject Reason", " tag count is 0 or fiducial ambiguity is greater than 0.7");
+    }
+    if(Math.abs(m_gyro.getAngularVelocityZWorld().getValueAsDouble()) > 500){
+      doRejectUpdate = true; 
+      SmartDashboard.putString("Reject Reason", "Angular velocity is over 500");
+    }
+    if(Timer.getFPGATimestamp() - mt1.timestampSeconds > 0.2){
+      doRejectUpdate = true;
+      SmartDashboard.putString("Reject Reason", "MegaTag Time is off by over .2 seconds");
+    }
+    Pose2d visionPose = mt1.pose;
+    Pose2d currPose = m_poseEstimator.getEstimatedPosition();
 
     // if(visionPose.getTranslation().getDistance(currPose.getTranslation())>2.0){
     //   doRejectUpdate = true;
     //   SmartDashboard.putString("Reject Reason", "currPose greater than 2 from vision pose");
     // }
 
-    // if(!doRejectUpdate){
-    //   SmartDashboard.putString("Reject Reason", "None");
-    //   double xStd = 0.5;
-    //   double yStd = 0.5;
-    //   double thetaStd = (Math.abs(m_gyro.getAngularVelocityZWorld().getValueAsDouble()) < 100)?
-    //    Units.degreesToRadians(5):Units.degreesToRadians(30);
-    //   m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(xStd,yStd,thetaStd));
-    //   m_poseEstimator.addVisionMeasurement(visionPose,mt1.timestampSeconds);
-    // }
+    if(!doRejectUpdate){
+      SmartDashboard.putString("Reject Reason", "None");
+      double xStd = 0.5;
+      double yStd = 0.5;
+      double thetaStd = (Math.abs(m_gyro.getAngularVelocityZWorld().getValueAsDouble()) < 100)?
+       Units.degreesToRadians(5):Units.degreesToRadians(30);
+      m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(xStd,yStd,thetaStd));
+      m_poseEstimator.addVisionMeasurement(visionPose,mt1.timestampSeconds);
+    }
 
-    // m_field.setRobotPose(currPose);
-    // SmartDashboard.putString("Angular Velocity", ""+m_gyro.getAngularVelocityZWorld().getValueAsDouble());
-    // SmartDashboard.putString("Pose", ""+getPose());
-    // SmartDashboard.putBoolean("Do Reject", doRejectUpdate);
-    // SmartDashboard.putString("Fiducial Length", ""+mt1.rawFiducials.length);
+    m_field.setRobotPose(currPose);
+    SmartDashboard.putString("Angular Velocity", ""+m_gyro.getAngularVelocityZWorld().getValueAsDouble());
+    SmartDashboard.putString("Pose", ""+getPose());
+    SmartDashboard.putBoolean("Do Reject", doRejectUpdate);
+    SmartDashboard.putString("Fiducial Length", ""+mt1.rawFiducials.length);
     
 
   }
