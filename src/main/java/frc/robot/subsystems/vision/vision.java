@@ -106,6 +106,6 @@ public void setPipeline(int pipeline){
       lastAprilTag = limelightTable.getEntry("tid").getDouble(0);
     }
     
-    System.out.println("april Tag: " + lastAprilTag + limelightTable.getEntry("tx").getDouble(0));
+    //System.out.println("april Tag: " + lastAprilTag + limelightTable.getEntry("tx").getDouble(0));
   }
 }

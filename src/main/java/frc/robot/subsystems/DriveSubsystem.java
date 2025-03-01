@@ -374,12 +374,18 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
     public void goToPose(Pose2d target, boolean fieldOriented) {
+      SmartDashboard.putString("going to Pose", "going");
     Pose2d pose = getPose();
     double xSpeed = MathUtil.clamp(xPid.calculate(pose.getX(), target.getX()), -1, 1) * kMaxSpeedMetersPerSecond;
     double ySpeed = MathUtil.clamp(yPid.calculate(pose.getY(), target.getY()), -1, 1) * kMaxSpeedMetersPerSecond;
     double vTheta = MathUtil
         .clamp(anglePid.calculate(normalizeAngle(pose.getRotation().getDegrees()), normalizeAngle(target.getRotation().getDegrees())), -1, 1)
         * kMaxAngularSpeedRadiansPerSecond;
+    SmartDashboard.putString("poseX", ""+pose.getX());
+    SmartDashboard.putString("targetX", ""+target.getX());
+    SmartDashboard.putString("xSpeed", ""+xSpeed);
+    SmartDashboard.putString("ySpeed", ""+ySpeed);
+    SmartDashboard.putString("thetaSpeed", ""+vTheta);
     this.drive(xSpeed, ySpeed, vTheta, fieldOriented);
   }
   private static double normalizeAngle(double angle) {

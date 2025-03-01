@@ -17,10 +17,15 @@ public class PoseMaps {
 
     private final AprilTagFieldLayout aprilTagsLayout =
       AprilTagFields.k2025Reefscape.loadAprilTagLayoutField();
-    private HashMap<Double, Pose2d> poses = setHashMap();
+    public HashMap<Double, Pose2d> poses = setHashMap();
 
     private double coralOffset = Units.inchesToMeters(6);
-    
+    public PoseMaps(){
+        poses = setHashMap();
+        SmartDashboard.putString("Plain Pose", ""+plainPose);
+        System.out.println(poses);
+        
+    }
 
     private Pose2d aprilPose6= new Pose2d(
         aprilTagsLayout.getTagPose(6).get().getX(),
@@ -77,18 +82,18 @@ public class PoseMaps {
     }
     private Direction direction = Direction.NONE;
     public HashMap<Double, Pose2d> setHashMap(){
-        HashMap<Double, Pose2d> poses = new HashMap<Double, Pose2d>();
+        HashMap<Double, Pose2d> hi = new HashMap<Double, Pose2d>();
         List<Double> doubleList = Arrays.asList(6.0,7.0,8.0,9.0,10.0,11.0,17.0,18.0,19.0,20.0,21.0,22.0);
 
         // Using for-each loop to iterate through the list
         for (double value : doubleList) {
-            poses.put(value, new Pose2d(
+            hi.put(value, new Pose2d(
                 aprilTagsLayout.getTagPose(((int)value)).get().getX(),
                 aprilTagsLayout.getTagPose((int)value).get().getY(),
                 new Rotation2d(aprilTagsLayout.getTagPose((int)value).get().getRotation().getZ())));
         }
-        System.out.println(poses);
-        return poses;
+        //System.out.println(hi);
+        return hi;
     }
     /**
      * Returns a Pose2d using cosine and sine to calculate offset to correct bot pose for coral scoring
@@ -96,18 +101,34 @@ public class PoseMaps {
      * @param direction
      * @return botPose2d
      */
+   public Pose2d plainPose;
+   public double plainTheta;
+    public double thetaCos ;
+    public double thetaSin ;
+    public double xAprilTag ;
+    public double yAprilTag ;
+    public double xBot;
+    public double yBot;
+    public double thetaBot;
     public Pose2d getPose2d(double aprilTag, Direction direction){
+        SmartDashboard.putString("aprilTag", ""+aprilTag);
+         plainPose = poses.get(aprilTag);
+         if(plainPose == null){
+            SmartDashboard.putString("plainPose Null?", "Yes");
+         }
+          
+        plainTheta = plainPose.getRotation().getRadians();
+         thetaCos = plainPose.getRotation().getCos();
+         thetaSin = plainPose.getRotation().getSin();
+         xAprilTag = plainPose.getX();
+         yAprilTag = plainPose.getY();
         
-        Pose2d plainPose = poses.get(aprilTag);
-        double plainTheta = plainPose.getRotation().getRadians();
-        double thetaCos = plainPose.getRotation().getCos();
-        double thetaSin = plainPose.getRotation().getSin();
-        double xAprilTag = plainPose.getX();
-        double yAprilTag = plainPose.getY();
-        
-        double xBot = 0;
-        double yBot = 0;
-        double thetaBot = 0;
+         xBot = 0;
+         yBot = 0;
+         thetaBot = 0;
+         SmartDashboard.putString("Plain Pose", ""+plainPose);
+         
+        //SmartDashboard.putString("plain theta", ""+plainPose.getRotation().getRadians());
         
         if(direction == Direction.RIGHT){
             xBot = (xAprilTag + thetaCos * coralOffset) + 

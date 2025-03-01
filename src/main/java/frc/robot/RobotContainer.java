@@ -74,7 +74,7 @@ public class RobotContainer {
 
  public HashMap<Double, Pose2d[]> poses =  new HashMap<Double, Pose2d[]>();
 
- public int lastAprilTag = 0;
+ public double lastAprilTag = 0.0;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -82,12 +82,10 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
-    m_poseMaps.setHashMap();
-    m_poseMaps.getPose2d(7.0, Direction.LEFT);
-    m_poseMaps.getPose2d(7.0, Direction.RIGHT);
+    //System.out.println(m_poseMaps.getPose2d(lastAprilTag, Direction.LEFT));
+  
     
-    poses.put(7.0,new Pose2d[]{ targetPose, targetPose});
-    poses.put(1.0, new Pose2d[]{targetRightPose,targetRightPose});
+
 
     //NamedCommands.registerCommand("Outake Coral", m_coralHandler.coralOutake(0.2).withTimeout(5));
 
@@ -236,13 +234,13 @@ public class RobotContainer {
      .whileTrue(
         new RunCommand(
           ()->
-            m_robotDrive.goToPose(m_poseMaps.getPose2d(lastAprilTag, Direction.RIGHT), false), m_robotDrive));
+            m_robotDrive.goToPose(m_poseMaps.getPose2d(m_vision.lastAprilTag, Direction.RIGHT), true), m_robotDrive));
     
-    // driverButtonBinder.getButton("leftBumper", "go to pose")
-    // .whileTrue(
-    //    new RunCommand(
-    //      ()->
-    //        m_robotDrive.goToPose(m_poseMaps.getPose2d(lastAprilTag, Direction.LEFT), false), m_robotDrive));
+    driverButtonBinder.getButton("leftBumper", "go to pose")
+    .whileTrue(
+       new RunCommand(
+         ()->
+           m_robotDrive.goToPose(m_poseMaps.getPose2d(m_vision.lastAprilTag, Direction.LEFT), true), m_robotDrive));
   }
 
   /**
