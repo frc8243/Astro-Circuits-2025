@@ -74,7 +74,7 @@ public class DriveSubsystem extends SubsystemBase {
   
   private PIDController xPid = new PIDController(5, 0, 0.2);
   private PIDController yPid = new PIDController(5, 0, 0.2);
-  private PIDController anglePid = new PIDController(3,0,0);
+  private PIDController anglePid = new PIDController(1.5,0,0);
   private double kMaxSpeedMetersPerSecond = .2;
   private double kMaxAngularSpeedRadiansPerSecond = .2;
 
@@ -379,27 +379,35 @@ public class DriveSubsystem extends SubsystemBase {
     double xSpeed = MathUtil.clamp(xPid.calculate(pose.getX(), target.getX()), -1, 1) * kMaxSpeedMetersPerSecond;
     double ySpeed = MathUtil.clamp(yPid.calculate(pose.getY(), target.getY()), -1, 1) * kMaxSpeedMetersPerSecond;
     double vTheta = MathUtil
-        .clamp(anglePid.calculate(normalizeAngle(pose.getRotation().getDegrees()), normalizeAngle(target.getRotation().getDegrees())), -1, 1)
+        .clamp(anglePid.calculate(normalizeAngle(pose.getRotation().getDegrees()),
+         normalizeAngle(target.getRotation().getDegrees())), -1, 1)
         * kMaxAngularSpeedRadiansPerSecond;
     SmartDashboard.putString("poseX", ""+pose.getX());
     SmartDashboard.putString("targetX", ""+target.getX());
     SmartDashboard.putString("xSpeed", ""+xSpeed);
     SmartDashboard.putString("ySpeed", ""+ySpeed);
     SmartDashboard.putString("thetaSpeed", ""+vTheta);
+    SmartDashboard.putString("anglePlain", ""+pose.getRotation().getDegrees());
+    SmartDashboard.putString("normalizedAngle", ""+normalizeAngle(pose.getRotation().getDegrees()));
+    SmartDashboard.putString("targetAngle", ""+ normalizeAngle(target.getRotation().getDegrees()));
     this.drive(xSpeed, ySpeed, vTheta, fieldOriented);
   }
   private static double normalizeAngle(double angle) {
-    if (angle > 0) {
-      angle %= 360;
-      if (angle > 180) {
-        angle -= 360;
-      }
-    } else if (angle < 0) {
-      angle %= -360;
-      if (angle < -180) {
-        angle += 360;
-      }
-    }
-    return angle;
+    // if (angle > 0) {
+    //   angle %= 360;
+    //   if (angle >= 180) {
+    //     angle -= 360;
+    //   }
+    // } else if (angle < 0) {
+    //   angle %= 360;
+    //   if (angle <= -180) {
+    //     angle += 360;
+    //   }
+    //   else{
+    //     angle
+    //   }
+    // }
+
+    return (angle + 360) % 360;
   }
 }

@@ -137,7 +137,7 @@ public class PoseMaps {
             yBot = (yAprilTag + thetaSin * coralOffset) + 
             Math.sin(-(Math.PI/2) + plainTheta) *  Units.inchesToMeters(18.5);
 
-            thetaBot = plainTheta - Math.PI;
+            thetaBot = plainTheta - 3.14;
             SmartDashboard.putString("Direction Directing", "Right");
 
         }   
@@ -148,7 +148,7 @@ public class PoseMaps {
             yBot = (yAprilTag - thetaSin * coralOffset) + 
             Math.sin(-(Math.PI/2) + plainTheta) *  Units.inchesToMeters(18.5);
 
-            thetaBot = plainTheta - Math.PI;
+            thetaBot = plainTheta - 3.14;
             SmartDashboard.putString("Direction Directing", "Left");
         }
         else{

@@ -55,7 +55,7 @@ public class AlgaeWrist extends SubsystemBase {
         NONE(Units.degreesToRadians(0)),
         STOW(Units.degreesToRadians(-5)),
         A1(Units.degreesToRadians(-15.06)),
-        A2(Units.degreesToRadians(-170)),
+        A2(Units.degreesToRadians(-150)),
         FLOOR(Units.degreesToRadians(-150)); //TODO: test this eventually
           
         private final double m_angle;

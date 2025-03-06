@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.NeoMotorConstants;
+import frc.robot.subsystems.LEDs.LEDSubsystem;
 
 public class coralHandler extends SubsystemBase {
   private final SparkMax leftSparkMax;
@@ -61,6 +62,7 @@ public class coralHandler extends SubsystemBase {
 
   private final SparkClosedLoopController leftPidController;
   private final SparkClosedLoopController rightPidController;
+  public LEDSubsystem m_LedSubsystem = new LEDSubsystem();
 
   //private final ColorSensorV3 colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
   private boolean hasCoral = false;
@@ -128,10 +130,12 @@ public class coralHandler extends SubsystemBase {
    System.out.println("the target is " + measurement1.distance_mm + "mm away!");
    System.out.println("has coral");
    hasCoral=true;
+   m_LedSubsystem.setBlue();
  }
  else {
    System.out.println("no coral");
    hasCoral=false;
+   m_LedSubsystem.setGreen();
  }
     //int proximity = colorSensor.getProximity();
      SmartDashboard.putBoolean("Sensor Eyes:",measurement1.status ==LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT);

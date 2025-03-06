@@ -8,6 +8,8 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -21,7 +23,9 @@ import au.grapplerobotics.CanBridge;
  * the package after creating this project, you must also update the build.gradle file in the
  * project.
  */
+
 public class Robot extends TimedRobot {
+  public final PowerDistribution examplePD = new PowerDistribution(1, ModuleType.kRev);
   private Command m_autonomousCommand;
   
  private final Field2d m_field = new Field2d();
@@ -57,7 +61,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-   
+   double totalCurrent = examplePD.getTotalCurrent();
+   SmartDashboard.putNumber("Total Current",totalCurrent);
 
   m_field.setRobotPose(m_robotContainer.m_robotDrive.m_poseEstimator.getEstimatedPosition());
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
@@ -70,8 +75,8 @@ public class Robot extends TimedRobot {
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
-    // m_robotContainer.m_elevator.stop();
-    // m_robotContainer.m_Algaewrist.stop();
+     m_robotContainer.m_elevator.stop();
+     m_robotContainer.m_Algaewrist.stop();
   }
 
   @Override
