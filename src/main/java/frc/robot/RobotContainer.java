@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -62,7 +63,7 @@ public class RobotContainer {
   public final PoseMaps m_poseMaps = new PoseMaps();
   private final Vision m_vision = new Vision(m_robotDrive);
   private final AlgaeSubsystem m_AlgaeSubsystem = new AlgaeSubsystem();
-  public final AlgaeWrist m_Algaewrist = new AlgaeWrist();
+  public final AlgaeWrist m_AlgaeWrist = new AlgaeWrist();
   // The driver's controller
  public static CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);// port 0
  public static CommandXboxController m_operatorController = new CommandXboxController(OIConstants.kOperatorControllerPort);// port 1
@@ -85,10 +86,11 @@ public class RobotContainer {
     configureButtonBindings();
     //System.out.println(m_poseMaps.getPose2d(lastAprilTag, Direction.LEFT));
   
-    
+    CameraServer.startAutomaticCapture();
 
 
-    //NamedCommands.registerCommand("Outake Coral", m_coralHandler.coralOutake(0.2).withTimeout(5));
+    NamedCommands.registerCommand("Outake Coral", m_coralHandler.coralBaseOutake(0.2).withTimeout(2));
+    NamedCommands.registerCommand("Raise Elevator", m_elevator.goToLiftL2Command().withTimeout(1));
 
     System.out.println(driverButtonBinder.getButtonUsageReport());
     driverButtonBinder.makeStatusDashboardWidgets("Driver Buttons");
@@ -153,12 +155,18 @@ public class RobotContainer {
 
       m_coralHandler.setDefaultCommand(
         new RunCommand(
-            () -> m_coralHandler.setAutoIntakeMotors(0)
+            () -> m_coralHandler.setAutoIntakeMotors(0.075)
             , m_coralHandler));
         m_AlgaeSubsystem.setDefaultCommand(
             new RunCommand(
                 () -> m_AlgaeSubsystem.stop(), m_AlgaeSubsystem)
         );
+        m_AlgaeWrist.setDefaultCommand(
+          new RunCommand(
+              () -> m_AlgaeWrist.manualControl(
+                  -MathUtil.applyDeadband(m_operatorController.getLeftY(), OIConstants.kDriveDeadband)
+              ), m_AlgaeWrist)
+      );
 
       
   }
@@ -198,10 +206,10 @@ public class RobotContainer {
 
 
       operatorButtonBinder.getButton("x", "Algae Intake")
-      .whileTrue(m_AlgaeSubsystem.AlgaeIntake(-0.2)).onFalse(m_AlgaeSubsystem.AlgaeIntake(0));
+      .whileTrue(m_AlgaeSubsystem.AlgaeIntake(-0.4)).onFalse(m_AlgaeSubsystem.AlgaeIntake(0));
 
       operatorButtonBinder.getButton("y", "Algae outtake")
-     .whileTrue(m_AlgaeSubsystem.AlgaeIntake(0.2)).onFalse(m_AlgaeSubsystem.AlgaeIntake(0));
+     .whileTrue(m_AlgaeSubsystem.AlgaeIntake(0.4)).onFalse(m_AlgaeSubsystem.AlgaeIntake(0));
 
 
 
@@ -211,20 +219,22 @@ public class RobotContainer {
     operatorButtonBinder.getButton("povRight", "Go to L3")
     .whileTrue(m_elevator.goToLiftL3Command());
 
-    operatorButtonBinder.getButton("povUp", "Go to L4")
-    .whileTrue(m_elevator.goToLiftL4Command());
+    // operatorButtonBinder.getButton("povUp", "Go to L4")
+    // .whileTrue(m_elevator.goToLiftL4Command());
+    operatorButtonBinder.getButton("povUp", "Elevator to A2")
+      .whileTrue(m_elevator.goToAlgaeHighCommand());
 
     operatorButtonBinder.getButton("povDown", "Go to bottom")
     .whileTrue(m_elevator.goToLiftStowCommand());
 
     driverButtonBinder.getButton("povLeft", "Wrist to A1")
-     .whileTrue(m_Algaewrist.goToWristAngleCommand(WristAngle.A1));
+     .whileTrue(m_AlgaeWrist.goToWristAngleCommand(WristAngle.A1));
 
     driverButtonBinder.getButton("povUp", "Wrist to Stow")
-        .whileTrue(m_Algaewrist.goToWristAngleCommand(WristAngle.STOW));
+        .whileTrue(m_AlgaeWrist.goToWristAngleCommand(WristAngle.STOW));
 
     driverButtonBinder.getButton("povRight", "Wrist to A2")
-        .whileTrue(m_Algaewrist.goToWristAngleCommand(WristAngle.A2));
+        .whileTrue(m_AlgaeWrist.goToWristAngleCommand(WristAngle.A2));
 
 
 

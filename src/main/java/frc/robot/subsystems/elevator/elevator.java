@@ -200,7 +200,7 @@ public class elevator extends SubsystemBase {
         System.out.println("Elevator Down");}
     );
   }
-  
+
 
 
   
@@ -296,6 +296,12 @@ public class elevator extends SubsystemBase {
     m_PeriodicIO.is_elevator_pos_control = true;
     m_PeriodicIO.elevator_target = Constants.Elevator.kHighAlgaeHeight;
     m_PeriodicIO.state = ElevatorState.A2;
+  }
+  public Command goToAlgaeHighCommand (){
+    return this.run(
+      ()->{goToAlgaeHigh();
+        System.out.println("Elevate to A2");}
+    );
   }
 
 

@@ -15,11 +15,14 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Velocity;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.NeoMotorConstants;
+import frc.robot.subsystems.LEDs.LEDSubsystem;
 
 public class AlgaeWrist extends SubsystemBase {
 
@@ -38,6 +41,10 @@ public class AlgaeWrist extends SubsystemBase {
   private final double wristI = 0;
   private final double wristD = 0;
   private final RelativeEncoder wristEncoder = algaeWristMotor.getEncoder();
+
+  public LEDSubsystem m_LedSubsystem = new LEDSubsystem();
+
+  private final DigitalInput limitSwitch = new DigitalInput(0);
   
       /** Creates a new AlgaeWrist. */
       private static final SparkMaxConfig.IdleMode wristIdleMode = SparkBaseConfig.IdleMode.kBrake;
@@ -75,9 +82,20 @@ public class AlgaeWrist extends SubsystemBase {
       SmartDashboard.putNumber("AlgaeWrist/Encoder Position", wristEncoder.getPosition());
       SmartDashboard.putNumber("Algae/Angle", angleEnum.getAngle());
       SmartDashboard.putString("Algae/State", ""+angleEnum);
+
+      if(limitSwitch.get()){ 
+        resetWrist();
+       
+      }
       // This method will be called once per scheduler run
     }
   
+    private void resetWrist(){
+      wristEncoder.setPosition(WristAngle.STOW.getAngle());
+      angleEnum = WristAngle.STOW;
+
+      
+    }
     private void goToWristAngle(double angle)
     {
       double ffCalc = mWristFeedForward.calculate((angle), 0.0);
@@ -92,24 +110,14 @@ public class AlgaeWrist extends SubsystemBase {
           System.out.println("Move Wrist to "  + angleEnum.toString());}
       );
     }
-    public void goUpFunction(double velocity){
-      algaeWristMotor.set(velocity);
+    public void manualControl(double velocity){
+      algaeWristMotor.set(velocity * 0.5);
+      SmartDashboard.putNumber("Wrist Manual Speed", velocity);
     }
-    public void goDownFunction(double velocity){
-      algaeWristMotor.set(velocity);
-    }
-    public Command algaeGoUp (double velocity){
-      return this.run(
-        ()->{goUpFunction(velocity); 
-          System.out.println("Algae Up");}
-      );
-    }
-    public Command algaeGoDown (double velocity){
-      return this.run(
-        ()->{goDownFunction(velocity); 
-          System.out.println("Algae down");}
-      );
-    }
+
+
+
+    
   
   
     public void stop() {

@@ -135,13 +135,13 @@ public class DriveSubsystem extends SubsystemBase {
           e.printStackTrace();
         }
         AutoBuilder.configure(
-        this::getPose, // Robot pose supplier
+        this::getPoseNoLimelight, // Robot pose supplier
         this::resetOdometry, // Method to reset odometry (will be called if your auto has a starting pose)
         this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
         (speeds, feedforwards) -> driveRobotRelative(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
         new PPHolonomicDriveController( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-            new PIDConstants(4, 0.0, 0.2), // Translation PID constants
-            new PIDConstants(3, 0.0, 0.0) // Rotation PID constants
+            new PIDConstants(3.15, 0.0, 0.1), // Translation PID constants
+            new PIDConstants(2, 0.0, 0.0) // Rotation PID constants
 
         ),
         config,
@@ -244,6 +244,9 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public Pose2d getPose() {
     return m_poseEstimator.getEstimatedPosition();
+  }
+  public Pose2d getPoseNoLimelight(){
+    return m_odometry.getPoseMeters();
   }
 
 

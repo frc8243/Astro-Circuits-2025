@@ -76,7 +76,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
      m_robotContainer.m_elevator.stop();
-     m_robotContainer.m_Algaewrist.stop();
+     m_robotContainer.m_AlgaeWrist.stop();
   }
 
   @Override
@@ -85,8 +85,9 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
     m_robotContainer.m_robotDrive.gyroReset();
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    
 
     /*
      * String autoSelected = SmartDashboard.getString("Auto Selector",
