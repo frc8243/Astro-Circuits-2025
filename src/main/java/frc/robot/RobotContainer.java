@@ -84,12 +84,12 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
-    //System.out.println(m_poseMaps.getPose2d(lastAprilTag, Direction.LEFT));
+    System.out.println(m_poseMaps.getPose2d(7.0, Direction.LEFT));
   
     CameraServer.startAutomaticCapture();
 
 
-    NamedCommands.registerCommand("Outake Coral", m_coralHandler.coralBaseOutake(0.2).withTimeout(2));
+    NamedCommands.registerCommand("Outake Coral", m_coralHandler.coralBaseOutake(0.2).withTimeout(2).andThen( ()-> m_coralHandler.stopMotors()));
     NamedCommands.registerCommand("Raise Elevator", m_elevator.goToLiftL2Command().withTimeout(1));
 
     System.out.println(driverButtonBinder.getButtonUsageReport());

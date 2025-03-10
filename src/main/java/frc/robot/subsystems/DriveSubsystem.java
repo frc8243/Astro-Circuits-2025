@@ -141,7 +141,7 @@ public class DriveSubsystem extends SubsystemBase {
         (speeds, feedforwards) -> driveRobotRelative(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
         new PPHolonomicDriveController( // HolonomicPathFollowerConfig, this should likely live in your Constants class
             new PIDConstants(3.15, 0.0, 0.1), // Translation PID constants
-            new PIDConstants(2, 0.0, 0.0) // Rotation PID constants
+            new PIDConstants(1, 0.0, 0.0) // Rotation PID constants
 
         ),
         config,

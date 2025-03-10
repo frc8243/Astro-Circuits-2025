@@ -117,9 +117,9 @@ public class PoseMaps {
             SmartDashboard.putString("plainPose Null?", "Yes");
          }
           
-        plainTheta = plainPose.getRotation().getRadians();
-         thetaCos = plainPose.getRotation().getCos();
-         thetaSin = plainPose.getRotation().getSin();
+        plainTheta = plainPose.getRotation().getRadians() + Math.PI/2;
+         thetaCos = Math.cos(plainTheta);//(plainPose.getRotation().getCos());
+         thetaSin = Math.sin(plainTheta);//(plainPose.getRotation().getSin());
          xAprilTag = plainPose.getX();
          yAprilTag = plainPose.getY();
         
@@ -137,7 +137,7 @@ public class PoseMaps {
             yBot = (yAprilTag + thetaSin * coralOffset) + 
             Math.sin(-(Math.PI/2) + plainTheta) *  Units.inchesToMeters(18.5);
 
-            thetaBot = plainTheta - 3.14;
+            thetaBot = plainTheta - (3.14 * 1.5);
             SmartDashboard.putString("Direction Directing", "Right");
 
         }   
@@ -148,7 +148,7 @@ public class PoseMaps {
             yBot = (yAprilTag - thetaSin * coralOffset) + 
             Math.sin(-(Math.PI/2) + plainTheta) *  Units.inchesToMeters(18.5);
 
-            thetaBot = plainTheta - 3.14;
+            thetaBot = plainTheta - (3.14 * 1.5);
             SmartDashboard.putString("Direction Directing", "Left");
         }
         else{

@@ -214,7 +214,7 @@ public class coralHandler extends SubsystemBase {
 
   public void stopMotors(){
     leftSparkMax.set(0);
-   // rightSparkMax.set(0);
+    rightSparkMax.set(0);
   }
 
   // private int getRed(){

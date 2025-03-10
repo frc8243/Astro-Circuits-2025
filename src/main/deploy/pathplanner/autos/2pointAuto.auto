@@ -27,6 +27,18 @@
           "data": {
             "waitTime": 4.0
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "backToReef"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Outake Coral"
+          }
         }
       ]
     }
