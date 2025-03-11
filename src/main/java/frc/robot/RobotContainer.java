@@ -235,23 +235,24 @@ public class RobotContainer {
 
     driverButtonBinder.getButton("povRight", "Wrist to A2")
         .whileTrue(m_AlgaeWrist.goToWristAngleCommand(WristAngle.A2));
-
+    driverButtonBinder.getButton("povDown", "Elevator L3 and algae out")
+        .whileTrue(m_elevator.goToLiftL3Command().alongWith(m_AlgaeWrist.goToWristAngleCommand(WristAngle.A2)));
 
 
 
     //  driverButtonBinder.getButton("rightBumper", "Turn To Target").whileTrue(new TurnToTarget(m_robotDrive, m_vision));
     //  driverButtonBinder.getButton("leftBumper", "Move To Target").whileTrue(new MoveToTarget(m_robotDrive, m_vision));
-     driverButtonBinder.getButton("rightBumper", "go to pose")
-     .whileTrue(
-        new RunCommand(
-          ()->
-            m_robotDrive.goToPose(m_poseMaps.getPose2d(m_vision.lastAprilTag, Direction.RIGHT), true), m_robotDrive));
+    //  driverButtonBinder.getButton("rightBumper", "go to pose")
+    //  .whileTrue(
+    //     new RunCommand(
+    //       ()->
+    //         m_robotDrive.goToPose(m_poseMaps.getPose2d(m_vision.lastAprilTag, Direction.RIGHT), true), m_robotDrive));
     
-    driverButtonBinder.getButton("leftBumper", "go to pose")
-    .whileTrue(
-       new RunCommand(
-         ()->
-           m_robotDrive.goToPose(m_poseMaps.getPose2d(m_vision.lastAprilTag, Direction.LEFT), true), m_robotDrive));
+    // driverButtonBinder.getButton("leftBumper", "go to pose")
+    // .whileTrue(
+    //    new RunCommand(
+    //      ()->
+    //        m_robotDrive.goToPose(m_poseMaps.getPose2d(m_vision.lastAprilTag, Direction.LEFT), true), m_robotDrive));
   }
 
   /**
