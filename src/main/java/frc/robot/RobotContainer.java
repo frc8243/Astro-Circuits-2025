@@ -34,6 +34,7 @@ import frc.robot.subsystems.Algae.AlgaeWrist.WristAngle;
 import frc.robot.subsystems.PoseMaps.Direction;
 import frc.robot.subsystems.coral.coralHandler;
 import frc.robot.subsystems.elevator.elevator;
+import frc.robot.subsystems.elevator.elevator.ElevatorState;
 import frc.robot.subsystems.vision.Vision;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -146,11 +147,17 @@ public class RobotContainer {
         // The left stick controls translation of the robot.
         // Turning is controlled by the X axis of the right stick.
         new RunCommand(
-            () -> m_robotDrive.drive(
+            () ->{
+              if(m_elevator.getPosition() >= 30.0){
+                m_robotDrive.setDriveSpeedMultiplier(0.4);
+              }
+              else{
+                m_robotDrive.setDriveSpeedMultiplier(1.0);
+              } m_robotDrive.drive(
                 -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
                 -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
                 -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
-                true),
+                true);},
             m_robotDrive));
 
       m_coralHandler.setDefaultCommand(
@@ -195,7 +202,7 @@ public class RobotContainer {
 
 
     operatorButtonBinder.getButton("a", "Coral Intake")
-       .whileTrue(m_coralHandler.coralIntake(-0.2));
+       .whileTrue(m_coralHandler.coralIntake(0.05));
        
     operatorButtonBinder.getButton("b", "Coral Outake")
       .whileTrue(m_coralHandler.coralIntake(0.2));
@@ -236,7 +243,7 @@ public class RobotContainer {
     driverButtonBinder.getButton("povRight", "Wrist to A2")
         .whileTrue(m_AlgaeWrist.goToWristAngleCommand(WristAngle.A2));
     driverButtonBinder.getButton("povDown", "Elevator L3 and algae out")
-        .whileTrue(m_elevator.goToLiftL3Command().alongWith(m_AlgaeWrist.goToWristAngleCommand(WristAngle.A2)));
+        .onTrue(m_elevator.goToLiftL3Command().alongWith(m_AlgaeWrist.goToWristAngleCommand(WristAngle.A2)));
 
 
 

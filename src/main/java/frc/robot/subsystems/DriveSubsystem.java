@@ -87,7 +87,7 @@ public class DriveSubsystem extends SubsystemBase {
    private final AprilTagFieldLayout aprilTagsLayout =
       AprilTagFields.k2025Reefscape.loadAprilTagLayoutField();
   
-
+private double driveSpeedMultiplier = 1.0;
   // The gyro sensor
   public final Pigeon2 m_gyro = new Pigeon2(2,"rio");
 
@@ -159,6 +159,10 @@ public class DriveSubsystem extends SubsystemBase {
       
     // Usage reporting for MAXSwerve template
     HAL.report(tResourceType.kResourceType_RobotDrive, tInstances.kRobotDriveSwerve_MaxSwerve);
+  }
+
+  public void setDriveSpeedMultiplier(double multiplier){
+    driveSpeedMultiplier = multiplier;
   }
 
   @Override
@@ -279,9 +283,9 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
     // Convert the commanded speeds into the correct units for the drivetrain
-    double xSpeedDelivered = xSpeed * DriveConstants.kMaxSpeedMetersPerSecond;
-    double ySpeedDelivered = ySpeed * DriveConstants.kMaxSpeedMetersPerSecond;
-    double rotDelivered = rot * DriveConstants.kMaxAngularSpeed;
+    double xSpeedDelivered = xSpeed * DriveConstants.kMaxSpeedMetersPerSecond * driveSpeedMultiplier;
+    double ySpeedDelivered = ySpeed * DriveConstants.kMaxSpeedMetersPerSecond * driveSpeedMultiplier;
+    double rotDelivered = rot * DriveConstants.kMaxAngularSpeed * driveSpeedMultiplier; 
 
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
         fieldRelative

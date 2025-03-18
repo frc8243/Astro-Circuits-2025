@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.NeoMotorConstants;
 
 
 
@@ -48,6 +49,7 @@ public class elevator extends SubsystemBase {
   private static final SparkMaxConfig sparkMaxConfigRight = new SparkMaxConfig();
 
   private static final boolean leftEncoderInverted = false;
+
   private static final boolean rightEncoderInverted = true;
 
   private static final double leftEncoderPositionFactor = 1.12;
@@ -57,15 +59,15 @@ public class elevator extends SubsystemBase {
   private static final double leftI = 0;
   private static final double leftD = 0;
   //private static final double LeftFF = 1 / ;
-  private static final double leftMinOutput = -.8;
-  private static final double leftMaxOutput = .8;   
+  private static final double leftMinOutput = -1;//-.8;
+  private static final double leftMaxOutput = 1;   
 
   private static final double rightP = 0.4;
   private static final double rightI = 0;
   private static final double rightD = 0.001;
   //private static final double rightFF = 1.0;
-  private static final double rightMinOutput = -.8;
-  private static final double rightMaxOutput = .8;
+  private static final double rightMinOutput = -1;//-.8;
+  private static final double rightMaxOutput = 1;
 
   private static final SparkMaxConfig.IdleMode leftMotorIdleMode = SparkBaseConfig.IdleMode.kBrake;
   private static final SparkMaxConfig.IdleMode rightMotorIdleMode = SparkBaseConfig.IdleMode.kBrake;
@@ -83,13 +85,14 @@ public class elevator extends SubsystemBase {
       sparkMaxConfigLeft.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
         .pid(leftP, leftI, leftD, ClosedLoopSlot.kSlot0).outputRange(leftMinOutput, leftMaxOutput);
      
-        sparkMaxConfigRight.inverted(rightEncoderInverted).idleMode(rightMotorIdleMode);
-      sparkMaxConfigRight.encoder.positionConversionFactor(rightEncoderPositionFactor)
-        .velocityConversionFactor(rightEncoderPositionFactor/60);
-      sparkMaxConfigRight.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-        .pid(rightP, rightI, rightD, ClosedLoopSlot.kSlot0).outputRange(rightMinOutput, rightMaxOutput);
-  
-  
+      //   sparkMaxConfigRight.inverted(rightEncoderInverted).idleMode(rightMotorIdleMode);
+      // sparkMaxConfigRight.encoder.positionConversionFactor(rightEncoderPositionFactor)
+      //   .velocityConversionFactor(rightEncoderPositionFactor/60);
+      // sparkMaxConfigRight.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+      //   .pid(rightP, rightI, rightD, ClosedLoopSlot.kSlot0).outputRange(rightMinOutput, 1.0);
+  //right minoutput increase to 12v?
+  //check p constant
+      sparkMaxConfigRight.follow(8, true);
 
     leftSparkMax.configure(sparkMaxConfigLeft, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     rightSparkMax.configure(sparkMaxConfigRight, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -97,6 +100,7 @@ public class elevator extends SubsystemBase {
     rightRelativeEncoder = rightSparkMax.getEncoder();
     leftPidController = leftSparkMax.getClosedLoopController();
     rightPidController = rightSparkMax.getClosedLoopController();
+
 
     mProfile = new TrapezoidProfile(
       new TrapezoidProfile.Constraints(Constants.Elevator.kMaxVelocity, Constants.Elevator.kMaxAcceleration));
@@ -127,9 +131,10 @@ public class elevator extends SubsystemBase {
   public void periodic() {
     SmartDashboard.putNumber("Elevator/Left Encoder", leftRelativeEncoder.getPosition());
     SmartDashboard.putNumber("Elevator/Right Encoder", rightRelativeEncoder.getPosition());
-    SmartDashboard.putNumber("Elevator/Position/CurrentRight", rightSparkMax.get());
-    SmartDashboard.putNumber("Elevator/Position/CurrentLeft", leftSparkMax.get());
+    SmartDashboard.putNumber("Elevator/Position/Position Right", rightSparkMax.get());
+    SmartDashboard.putNumber("Elevator/Position/Position Left", leftSparkMax.get());
     SmartDashboard.putNumber("Elevator/Position/Elevator Power", m_PeriodicIO.elevator_power);
+    
     outputTelemetry();
     writePeriodicOutputs();
     // This method will be called once per scheduler run
@@ -156,13 +161,13 @@ public class elevator extends SubsystemBase {
           ClosedLoopSlot.kSlot0,
            Constants.Elevator.kG,
           ArbFFUnits.kVoltage);
-
-      rightPidController.setReference(
-          mCurState.position,
-          SparkMax.ControlType.kPosition,
-          ClosedLoopSlot.kSlot0,
-           Constants.Elevator.kG,
-          ArbFFUnits.kVoltage);
+      
+      //rightPidController.setReference(
+      //    mCurState.position,
+      //    SparkMax.ControlType.kPosition,
+      //    ClosedLoopSlot.kSlot0,
+      //     Constants.Elevator.kG,
+      //    ArbFFUnits.kVoltage);
 
       
     } else {
@@ -179,6 +184,7 @@ public class elevator extends SubsystemBase {
     m_PeriodicIO.elevator_power = 0.0;
 
     leftSparkMax.set(0.0);
+    rightSparkMax.set(0.0);
   }
   public void goUpFunction(double speed){
     m_PeriodicIO.is_elevator_pos_control = false;
@@ -201,22 +207,27 @@ public class elevator extends SubsystemBase {
     );
   }
 
+  public double getPosition(){
+    return  leftRelativeEncoder.getPosition();
+  }
 
 
   
   public void outputTelemetry() {
-    SmartDashboard.putNumber("Elevator/Position/Current", leftRelativeEncoder.getPosition());
+    //SmartDashboard.putNumber("Elevator/Position/Current", leftRelativeEncoder.getPosition());
     SmartDashboard.putNumber("Elevator/Position/Target", m_PeriodicIO.elevator_target);
-    SmartDashboard.putNumber("Elevator/Velocity/Current", leftRelativeEncoder.getVelocity());
+    SmartDashboard.putNumber("Elevator/Velocity/Left Velociy", leftRelativeEncoder.getVelocity());
+    SmartDashboard.putNumber("Elevator/Velocity/Right Velociy", rightRelativeEncoder.getVelocity());
 
     SmartDashboard.putNumber("Elevator/Position/Setpoint", mCurState.position);
     SmartDashboard.putNumber("Elevator/Velocity/Setpoint", mCurState.velocity);
 
-    SmartDashboard.putNumber("Elevator/Current/Left", leftSparkMax.getOutputCurrent());
-    SmartDashboard.putNumber("Elevator/Current/Right", rightSparkMax.getOutputCurrent());
+    SmartDashboard.putNumber("Elevator/Current/Left current", leftSparkMax.getOutputCurrent());
+    SmartDashboard.putNumber("Elevator/Current/Right current", rightSparkMax.getOutputCurrent());
 
-    SmartDashboard.putNumber("Elevator/Output/Left", leftSparkMax.getAppliedOutput());
-    SmartDashboard.putNumber("Elevator/Output/Right", rightSparkMax.getAppliedOutput());
+    SmartDashboard.putNumber("Elevator/Output/Left duty cycle", leftSparkMax.getAppliedOutput());
+
+    SmartDashboard.putNumber("Elevator/Output/Right duty cycle", rightSparkMax.getAppliedOutput());
 
     SmartDashboard.putString("Elevator/State", "" + getState());
   }

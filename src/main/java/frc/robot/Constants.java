@@ -99,7 +99,7 @@ public final class Constants {
 
   public static final class NeoMotorConstants {
     public static final double kFreeSpeedRpm = 5676;
-    public static final int NEOCurrentLimit = 50;
+    public static final int NEOCurrentLimit = 40;
     public static final int NEO550CurrentLimit  = 20;
   }
 
@@ -109,7 +109,7 @@ public final class Constants {
     public static final double kD = 0;
     public static final double kG = 0.13;
     public static final double kIZone = 5.0; //TODO: FIND WHAT THIS IS
-    public static final double kMaxVelocity = 25; //Inches per Second 25.47
+    public static final double kMaxVelocity = 35; //Inches per Second 25.47
     public static final double kMaxAcceleration = 35; //TODO: FIND WHAT THIS IS
 
     public static final double kStowHeight = 0;

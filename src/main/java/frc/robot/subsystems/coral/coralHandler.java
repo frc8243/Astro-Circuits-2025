@@ -128,7 +128,7 @@ public class coralHandler extends SubsystemBase {
   if ( ( measurement1 !=null && measurement1.distance_mm < 50)) {
   
    System.out.println("the target is " + measurement1.distance_mm + "mm away!");
-   System.out.println("has coral");
+   //System.out.println("has coral");
    hasCoral=true;
    m_LedSubsystem.setBlue();
  }
@@ -138,8 +138,8 @@ public class coralHandler extends SubsystemBase {
    m_LedSubsystem.setGreen();
  }
     //int proximity = colorSensor.getProximity();
-     SmartDashboard.putBoolean("Sensor Eyes:",measurement1.status ==LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT);
-     SmartDashboard.putNumber("sensor distance", measurement1.distance_mm); 
+    // SmartDashboard.putBoolean("Sensor Eyes:",measurement1.status ==LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT);
+     //SmartDashboard.putNumber("sensor distance", measurement1.distance_mm); 
     //System.out.println("Proximity: " + proximity);
     
     // Proximity is higher when the object is closer

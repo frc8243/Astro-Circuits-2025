@@ -8,6 +8,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -50,6 +51,15 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();
     table = NetworkTableInstance.getDefault().getTable("telemetry");
     
+
+    
+    DataLogManager.start();
+    DriverStation.startDataLog(DataLogManager.getLog());
+    CommandScheduler.getInstance().onCommandInitialize(cmd -> DataLogManager.log(cmd.getName() + " : Init"));
+    CommandScheduler.getInstance().onCommandInterrupt((interrupted, interrupting) -> DataLogManager
+        .log(interrupted.getName() + "Interrupted by "
+            + (!interrupting.isEmpty() ? interrupting.get().getName() : "nothing")));
+    CommandScheduler.getInstance().onCommandFinish(cmd -> DataLogManager.log(cmd.getName() + ": End"));
   }
 
   /**
