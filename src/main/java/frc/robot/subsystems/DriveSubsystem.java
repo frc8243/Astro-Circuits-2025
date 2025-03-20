@@ -74,7 +74,7 @@ public class DriveSubsystem extends SubsystemBase {
   
   private PIDController xPid = new PIDController(5, 0, 0.2);
   private PIDController yPid = new PIDController(5, 0, 0.2);
-  private PIDController anglePid = new PIDController(1.5,0,0);
+  private PIDController anglePid = new PIDController(1,0,0);
   private double kMaxSpeedMetersPerSecond = .2;
   private double kMaxAngularSpeedRadiansPerSecond = .2;
 
@@ -85,7 +85,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   public Field2d m_field = new Field2d();
    private final AprilTagFieldLayout aprilTagsLayout =
-      AprilTagFields.k2025Reefscape.loadAprilTagLayoutField();
+      AprilTagFields.k2025ReefscapeAndyMark.loadAprilTagLayoutField();
   
 private double driveSpeedMultiplier = 1.0;
   // The gyro sensor
@@ -141,7 +141,7 @@ private double driveSpeedMultiplier = 1.0;
         (speeds, feedforwards) -> driveRobotRelative(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
         new PPHolonomicDriveController( // HolonomicPathFollowerConfig, this should likely live in your Constants class
             new PIDConstants(3.15, 0.0, 0.1), // Translation PID constants
-            new PIDConstants(1, 0.0, 0.0) // Rotation PID constants
+            new PIDConstants(2.2, 0.0, 0.0) // Rotation PID constants
 
         ),
         config,

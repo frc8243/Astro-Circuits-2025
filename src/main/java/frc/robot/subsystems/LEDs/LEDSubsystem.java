@@ -10,6 +10,7 @@ import com.ctre.phoenix.led.FireAnimation;
 import com.ctre.phoenix.led.RainbowAnimation;
 import com.ctre.phoenix.led.StrobeAnimation;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class LEDSubsystem extends SubsystemBase {
@@ -21,25 +22,32 @@ public class LEDSubsystem extends SubsystemBase {
 public LEDSubsystem() {
   candle = new CANdle(10);
   candle.clearAnimation(0);
+  candle.configBrightnessScalar(0.1);
   candle.setLEDs(255,0,0);
   CANdleConfiguration ConfigAll = new CANdleConfiguration();
   candle.configAllSettings(ConfigAll);
+  
 }
 public void setRed() {
   candle.clearAnimation(0);
   candle.setLEDs(255,0,0);
+  candle.configBrightnessScalar(0.1);
 }
 public void setBlue() {
   candle.clearAnimation(0);
   candle.setLEDs(64,224,200);
+  candle.configBrightnessScalar(0.1);
 }
 public void setPurple() {
   candle.clearAnimation(0);
   candle.setLEDs(148,0,211);
+  candle.configBrightnessScalar(0.1);
 }
 public void setGreen() {
   candle.clearAnimation(0);
   candle.setLEDs(0,255,0);
+  
+  candle.configBrightnessScalar(0.1);
 }
 public void turnOff() {
   candle.setLEDs(0,0,0);
@@ -80,6 +88,8 @@ public void StrobeAnimation() {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("LED/current", candle.getCurrent());
+    SmartDashboard.putNumber("LED/temp", candle.getTemperature());
   }
 
   

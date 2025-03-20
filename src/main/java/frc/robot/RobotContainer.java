@@ -90,7 +90,8 @@ public class RobotContainer {
     CameraServer.startAutomaticCapture();
 
 
-    NamedCommands.registerCommand("Outake Coral", m_coralHandler.coralBaseOutake(0.2).withTimeout(2).andThen( ()-> m_coralHandler.stopMotors()));
+    NamedCommands.registerCommand("Outake Coral", m_coralHandler.coralBaseOutake(0.3).withTimeout(1).andThen( ()-> m_coralHandler.stopMotors()));
+    NamedCommands.registerCommand("Intake Coral", m_coralHandler.coralIntake(0.2).withTimeout(.4).andThen( ()-> m_coralHandler.stopMotors()));
     NamedCommands.registerCommand("Raise Elevator", m_elevator.goToLiftL2Command().withTimeout(1));
     NamedCommands.registerCommand("Raise L3", m_elevator.goToLiftL3Command().withTimeout(1));
     System.out.println(driverButtonBinder.getButtonUsageReport());

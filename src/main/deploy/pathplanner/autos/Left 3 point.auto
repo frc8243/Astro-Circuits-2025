@@ -1,0 +1,73 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "LeftToReef"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Outake Coral"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "LeftToStation"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 2.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "LeftBackReef"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Outake Coral"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "LeftBackStation"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 2.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "LeftBackReef"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Outake Coral"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": true
+}

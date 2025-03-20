@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class PoseMaps {
 
     private final AprilTagFieldLayout aprilTagsLayout =
-      AprilTagFields.k2025Reefscape.loadAprilTagLayoutField();
+      AprilTagFields.k2025ReefscapeAndyMark.loadAprilTagLayoutField();
     public HashMap<Double, Pose2d> poses = setHashMap();
 
     private double coralOffset = Units.inchesToMeters(6);
