@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import java.util.HashMap;
+import java.util.function.DoubleSupplier;
 
 import org.ejml.dense.row.MatrixFeatures_CDRM;
 
@@ -117,7 +118,7 @@ private double driveSpeedMultiplier = 1.0;
         return DriveConstants.kDriveKinematics.toChassisSpeeds(m_frontLeft.getState(),m_frontRight.getState(), m_rearLeft.getState(), m_rearRight.getState());
       }
       public void driveRobotRelative(ChassisSpeeds speeds){
-        this.drive(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond, false);
+        this.drive(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond, false, ()->1.0);
       }
 
   /** Creates a new DriveSubsystem. */
@@ -140,8 +141,8 @@ private double driveSpeedMultiplier = 1.0;
         this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
         (speeds, feedforwards) -> driveRobotRelative(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
         new PPHolonomicDriveController( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-            new PIDConstants(3.15, 0.0, 0.1), // Translation PID constants
-            new PIDConstants(2.2, 0.0, 0.0) // Rotation PID constants
+            new PIDConstants(6.8, 0.0, 0.1), // Translation PID constants
+            new PIDConstants(2.5, 0.0, 0.0) // Rotation PID constants
 
         ),
         config,
@@ -280,12 +281,13 @@ private double driveSpeedMultiplier = 1.0;
    * @param rot           Angular rate of the robot.
    * @param fieldRelative Whether the provided x and y speeds are relative to the
    *                      field.
+   * @param speedFactor Multiplier to affect speed of robot
    */
-  public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
+  public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative, DoubleSupplier speedFactor) {
     // Convert the commanded speeds into the correct units for the drivetrain
-    double xSpeedDelivered = xSpeed * DriveConstants.kMaxSpeedMetersPerSecond * driveSpeedMultiplier;
-    double ySpeedDelivered = ySpeed * DriveConstants.kMaxSpeedMetersPerSecond * driveSpeedMultiplier;
-    double rotDelivered = rot * DriveConstants.kMaxAngularSpeed * driveSpeedMultiplier; 
+    double xSpeedDelivered = xSpeed * DriveConstants.kMaxSpeedMetersPerSecond * speedFactor.getAsDouble();
+    double ySpeedDelivered = ySpeed * DriveConstants.kMaxSpeedMetersPerSecond * speedFactor.getAsDouble();
+    double rotDelivered = rot * DriveConstants.kMaxAngularSpeed * speedFactor.getAsDouble(); 
 
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
         fieldRelative
@@ -397,7 +399,7 @@ private double driveSpeedMultiplier = 1.0;
     SmartDashboard.putString("anglePlain", ""+pose.getRotation().getDegrees());
     SmartDashboard.putString("normalizedAngle", ""+normalizeAngle(pose.getRotation().getDegrees()));
     SmartDashboard.putString("targetAngle", ""+ normalizeAngle(target.getRotation().getDegrees()));
-    this.drive(xSpeed, ySpeed, vTheta, fieldOriented);
+    this.drive(xSpeed, ySpeed, vTheta, fieldOriented, ()-> 1.0);
   }
   private static double normalizeAngle(double angle) {
     // if (angle > 0) {

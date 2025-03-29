@@ -133,7 +133,7 @@ public class coralHandler extends SubsystemBase {
    m_LedSubsystem.setBlue();
  }
  else {
-   System.out.println("no coral");
+   //System.out.println("no coral");
    hasCoral=false;
    m_LedSubsystem.setGreen();
  }
@@ -175,6 +175,7 @@ public class coralHandler extends SubsystemBase {
    * @param speed
    */
   public void setAutoIntakeMotors (double speed){
+    //System.out.println("#################AutoIntaking");
       if(hasCoral){
        leftSparkMax.set(speed);
        rightSparkMax.set(-speed);
@@ -207,7 +208,7 @@ public class coralHandler extends SubsystemBase {
   public void setOutakeBaseMotor (double speed){
     //if(hasCoral){
       leftSparkMax.set(speed);
-      rightSparkMax.set(-speed/2);
+      rightSparkMax.set(-speed/1.1);
     //}
 
   }

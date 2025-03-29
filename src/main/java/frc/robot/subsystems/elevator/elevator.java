@@ -218,6 +218,7 @@ public class elevator extends SubsystemBase {
     SmartDashboard.putNumber("Elevator/Position/Target", m_PeriodicIO.elevator_target);
     SmartDashboard.putNumber("Elevator/Velocity/Left Velociy", leftRelativeEncoder.getVelocity());
     SmartDashboard.putNumber("Elevator/Velocity/Right Velociy", rightRelativeEncoder.getVelocity());
+    SmartDashboard.putNumber("Elevator/Pose", getPosition());
 
     SmartDashboard.putNumber("Elevator/Position/Setpoint", mCurState.position);
     SmartDashboard.putNumber("Elevator/Velocity/Setpoint", mCurState.velocity);
@@ -314,7 +315,12 @@ public class elevator extends SubsystemBase {
         System.out.println("Elevate to A2");}
     );
   }
-
+  public Command goToAlgaeLowCommand (){
+    return this.run(
+      ()->{goToAlgaeLow();
+        System.out.println("Elevate to A2");}
+    );
+  }
 
 
 

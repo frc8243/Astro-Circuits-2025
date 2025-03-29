@@ -36,17 +36,17 @@ public class TurnToTarget extends Command {
       double turnSpeed = kP * tx;
 
       System.out.println("TURNING TO APRIL TAG");
-      swerveDrive.drive(0,0, -turnSpeed, true);
+      swerveDrive.drive(0,0, -turnSpeed, true,()-> 1.0);
     } else{
       System.out.println("NO TARGET");
-      swerveDrive.drive(0,0,0, true);
+      swerveDrive.drive(0,0,0, true,()-> 1.0);
     }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    swerveDrive.drive(0, 0, 0, true);
+    swerveDrive.drive(0, 0, 0, true,()-> 1.0);
   }
 
   // Returns true when the command should end.

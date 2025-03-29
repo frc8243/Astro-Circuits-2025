@@ -37,6 +37,7 @@ import frc.robot.subsystems.elevator.elevator;
 import frc.robot.subsystems.elevator.elevator.ElevatorState;
 import frc.robot.subsystems.vision.Vision;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -79,6 +80,8 @@ public class RobotContainer {
 
  public double lastAprilTag = 0.0;
 
+ private double speedFactor = 1.0;
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -87,11 +90,20 @@ public class RobotContainer {
     configureButtonBindings();
     System.out.println(m_poseMaps.getPose2d(7.0, Direction.LEFT));
   
-    CameraServer.startAutomaticCapture();
+   // CameraServer.startAutomaticCapture();
 
 
-    NamedCommands.registerCommand("Outake Coral", m_coralHandler.coralBaseOutake(0.3).withTimeout(1).andThen( ()-> m_coralHandler.stopMotors()));
-    NamedCommands.registerCommand("Intake Coral", m_coralHandler.coralIntake(0.2).withTimeout(.4).andThen( ()-> m_coralHandler.stopMotors()));
+    NamedCommands.registerCommand("Outake Coral", 
+      m_coralHandler.coralBaseOutake(0.35).withTimeout(.5)
+      .andThen(()-> m_coralHandler.stopMotors())
+      .andThen( ()-> m_coralHandler.defaultCoralIntake(0.09)));
+
+  
+    NamedCommands.registerCommand("Final Outake Coral", 
+      m_coralHandler.coralBaseOutake(0.35).withTimeout(2.0)
+      .andThen(()-> m_coralHandler.stopMotors())
+      .andThen( ()-> m_coralHandler.defaultCoralIntake(0.09)));
+    NamedCommands.registerCommand("Intake Coral", m_coralHandler.defaultCoralIntake(0.1).withTimeout(1).andThen( ()-> m_coralHandler.stopMotors()));
     NamedCommands.registerCommand("Raise Elevator", m_elevator.goToLiftL2Command().withTimeout(1));
     NamedCommands.registerCommand("Raise L3", m_elevator.goToLiftL3Command().withTimeout(1));
     System.out.println(driverButtonBinder.getButtonUsageReport());
@@ -149,16 +161,14 @@ public class RobotContainer {
         // Turning is controlled by the X axis of the right stick.
         new RunCommand(
             () ->{
-              if(m_elevator.getPosition() >= 30.0){
-                m_robotDrive.setDriveSpeedMultiplier(0.4);
-              }
-              else{
-                m_robotDrive.setDriveSpeedMultiplier(1.0);
-              } m_robotDrive.drive(
+              
+              
+                
+               m_robotDrive.drive(
                 -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
                 -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
                 -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
-                true);},
+                true, ()-> speedFactor);},
             m_robotDrive));
 
       m_coralHandler.setDefaultCommand(
@@ -229,8 +239,11 @@ public class RobotContainer {
 
     // operatorButtonBinder.getButton("povUp", "Go to L4")
     // .whileTrue(m_elevator.goToLiftL4Command());
-    operatorButtonBinder.getButton("povUp", "Elevator to A2")
-      .whileTrue(m_elevator.goToAlgaeHighCommand());
+    operatorButtonBinder.getButton("back", "Elevator to A2")
+      .whileTrue(m_elevator.goToAlgaeHighCommand().alongWith(m_AlgaeWrist.goToWristAngleCommand(WristAngle.A2)));
+    operatorButtonBinder.getButton("start", "Elevator to A1")
+      .whileTrue(m_elevator.goToAlgaeLowCommand().alongWith(m_AlgaeWrist.goToWristAngleCommand(WristAngle.A2)));
+      
 
     operatorButtonBinder.getButton("povDown", "Go to bottom")
     .whileTrue(m_elevator.goToLiftStowCommand());
@@ -246,6 +259,8 @@ public class RobotContainer {
     driverButtonBinder.getButton("povDown", "Elevator L3 and algae out")
         .onTrue(m_elevator.goToLiftL3Command().alongWith(m_AlgaeWrist.goToWristAngleCommand(WristAngle.A2)));
 
+    driverButtonBinder.getButton("rightTrigger", "slow mode")
+      .onTrue(new InstantCommand(()-> speedFactor = 0.3)).onFalse(new InstantCommand(()-> speedFactor = 1.0));
 
 
     //  driverButtonBinder.getButton("rightBumper", "Turn To Target").whileTrue(new TurnToTarget(m_robotDrive, m_vision));

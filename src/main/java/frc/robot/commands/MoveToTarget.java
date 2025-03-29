@@ -42,15 +42,15 @@ public class MoveToTarget extends Command {
       
         if(distance > targetDistance){
             System.out.println("MOVING TO APRIL TAG");
-            swerveDrive.drive(0.2,0, 0, false);
+            swerveDrive.drive(0.2,0, 0, false, ()-> 1.0);
         }
         else{
-            swerveDrive.drive(0, 0, 0, false);
+            swerveDrive.drive(0, 0, 0, false,()-> 1.0);
         }
 
     } else{
       System.out.println("NO TARGET");
-      swerveDrive.drive(0,0,0, false);
+      swerveDrive.drive(0,0,0, false,()-> 1.0);
     }
     SmartDashboard.putNumber("targetDistance", distance);
     SmartDashboard.putNumber("angle", angleFromGround);
@@ -59,7 +59,7 @@ public class MoveToTarget extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    swerveDrive.drive(0, 0, 0, false);
+    swerveDrive.drive(0, 0, 0, false,()-> 1.0);
   }
 
   // Returns true when the command should end.

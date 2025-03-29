@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "straight to reef"
+            "pathName": "Wait"
           }
         },
         {
@@ -17,15 +17,22 @@
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "toStation"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 4.0
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake Coral"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 15.0
+                }
+              }
+            ]
           }
         }
       ]

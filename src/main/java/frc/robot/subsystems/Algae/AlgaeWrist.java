@@ -82,6 +82,7 @@ public class AlgaeWrist extends SubsystemBase {
       SmartDashboard.putNumber("AlgaeWrist/Encoder Position", wristEncoder.getPosition());
       SmartDashboard.putNumber("Algae/Angle", angleEnum.getAngle());
       SmartDashboard.putString("Algae/State", ""+angleEnum);
+      SmartDashboard.putBoolean("Algae/Switch Hit", limitSwitch.get());
 
       if(limitSwitch.get()){ 
         resetWrist();

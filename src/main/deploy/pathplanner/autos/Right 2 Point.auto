@@ -23,27 +23,41 @@
           }
         },
         {
-          "type": "wait",
+          "type": "parallel",
           "data": {
-            "waitTime": 1.8
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake Coral"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake Coral"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "RightBackReef"
+                }
+              }
+            ]
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Intake Coral"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "RightBackReef"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Outake Coral"
+            "name": "Final Outake Coral"
           }
         }
       ]

@@ -23,15 +23,28 @@
           }
         },
         {
-          "type": "wait",
+          "type": "named",
           "data": {
-            "waitTime": 2.0
+            "name": "Intake Coral"
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "LeftBackReef"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "LeftBackReef"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake Coral"
+                }
+              }
+            ]
           }
         },
         {
@@ -47,15 +60,28 @@
           }
         },
         {
-          "type": "wait",
+          "type": "named",
           "data": {
-            "waitTime": 2.0
+            "name": "Intake Coral"
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "LeftBackReef"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "LeftBackReef"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake Coral"
+                }
+              }
+            ]
           }
         },
         {
