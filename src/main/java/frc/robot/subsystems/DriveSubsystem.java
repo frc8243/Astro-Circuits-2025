@@ -135,6 +135,8 @@ private double driveSpeedMultiplier = 1.0;
         } catch (Exception e){
           e.printStackTrace();
         }
+
+        // Autonomous Configuration 
         AutoBuilder.configure(
         this::getPoseNoLimelight, // Robot pose supplier
         this::resetOdometry, // Method to reset odometry (will be called if your auto has a starting pose)

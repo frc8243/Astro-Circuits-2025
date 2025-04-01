@@ -209,14 +209,15 @@ public class RobotContainer {
         () -> m_robotDrive.gyroReset(),
             m_robotDrive));
 
+   
 
 
 
-    operatorButtonBinder.getButton("a", "Coral Intake")
-       .whileTrue(m_coralHandler.coralIntake(0.05));
-       
-    operatorButtonBinder.getButton("b", "Coral Outake")
-      .whileTrue(m_coralHandler.coralIntake(0.2));
+     operatorButtonBinder.getButton("a", "Coral Intake")
+        .whileTrue(m_coralHandler.coralIntake(0.05));
+
+     operatorButtonBinder.getButton("b", "Coral Outake")
+       .whileTrue(m_coralHandler.coralIntake(0.2));
 
       operatorButtonBinder.getButton("leftBumper", "Coral Base Outake")
       .whileTrue(m_coralHandler.coralBaseOutake(0.25));
@@ -239,9 +240,9 @@ public class RobotContainer {
 
     // operatorButtonBinder.getButton("povUp", "Go to L4")
     // .whileTrue(m_elevator.goToLiftL4Command());
-    operatorButtonBinder.getButton("back", "Elevator to A2")
+    operatorButtonBinder.getButton("start", "Elevator to A2")
       .whileTrue(m_elevator.goToAlgaeHighCommand().alongWith(m_AlgaeWrist.goToWristAngleCommand(WristAngle.A2)));
-    operatorButtonBinder.getButton("start", "Elevator to A1")
+    operatorButtonBinder.getButton("back", "Elevator to A1")
       .whileTrue(m_elevator.goToAlgaeLowCommand().alongWith(m_AlgaeWrist.goToWristAngleCommand(WristAngle.A2)));
       
 
@@ -262,7 +263,7 @@ public class RobotContainer {
     driverButtonBinder.getButton("rightTrigger", "slow mode")
       .onTrue(new InstantCommand(()-> speedFactor = 0.3)).onFalse(new InstantCommand(()-> speedFactor = 1.0));
 
-
+    
     //  driverButtonBinder.getButton("rightBumper", "Turn To Target").whileTrue(new TurnToTarget(m_robotDrive, m_vision));
     //  driverButtonBinder.getButton("leftBumper", "Move To Target").whileTrue(new MoveToTarget(m_robotDrive, m_vision));
     //  driverButtonBinder.getButton("rightBumper", "go to pose")

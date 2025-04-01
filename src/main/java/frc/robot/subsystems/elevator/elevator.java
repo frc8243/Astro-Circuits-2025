@@ -55,7 +55,7 @@ public class elevator extends SubsystemBase {
   private static final double leftEncoderPositionFactor = 1.12;
   private static final double rightEncoderPositionFactor = 1.12;
 
-  private static final double leftP = 0.4;
+  private static final double leftP = 0.1;
   private static final double leftI = 0;
   private static final double leftD = 0;
   //private static final double LeftFF = 1 / ;
@@ -79,6 +79,7 @@ public class elevator extends SubsystemBase {
       leftSparkMax = new SparkMax(8, MotorType.kBrushless);  
       rightSparkMax = new SparkMax(7,  MotorType.kBrushless);
 
+
       sparkMaxConfigLeft.inverted(leftEncoderInverted).idleMode(leftMotorIdleMode);
       sparkMaxConfigLeft.encoder.positionConversionFactor(leftEncoderPositionFactor)
         .velocityConversionFactor(leftEncoderPositionFactor/60);
@@ -86,20 +87,23 @@ public class elevator extends SubsystemBase {
         .pid(leftP, leftI, leftD, ClosedLoopSlot.kSlot0).outputRange(leftMinOutput, leftMaxOutput);
      
       //   sparkMaxConfigRight.inverted(rightEncoderInverted).idleMode(rightMotorIdleMode);
-      // sparkMaxConfigRight.encoder.positionConversionFactor(rightEncoderPositionFactor)
-      //   .velocityConversionFactor(rightEncoderPositionFactor/60);
+    //  sparkMaxConfigRight.encoder.positionConversionFactor(rightEncoderPositionFactor)
+    //      .velocityConversionFactor(rightEncoderPositionFactor/60);
       // sparkMaxConfigRight.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
       //   .pid(rightP, rightI, rightD, ClosedLoopSlot.kSlot0).outputRange(rightMinOutput, 1.0);
   //right minoutput increase to 12v?
   //check p constant
-      sparkMaxConfigRight.follow(8, true);
+      //sparkMaxConfigLeft.follow(8, true);
 
     leftSparkMax.configure(sparkMaxConfigLeft, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    rightSparkMax.configure(sparkMaxConfigRight, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    rightSparkMax.configure(sparkMaxConfigLeft.follow(8,true), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     leftRelativeEncoder = leftSparkMax.getEncoder();
     rightRelativeEncoder = rightSparkMax.getEncoder();
     leftPidController = leftSparkMax.getClosedLoopController();
-    rightPidController = rightSparkMax.getClosedLoopController();
+    rightPidController = leftSparkMax.getClosedLoopController();
+
+    leftRelativeEncoder.setPosition(0.0);
+    rightRelativeEncoder.setPosition(0.0);
 
 
     mProfile = new TrapezoidProfile(
@@ -134,6 +138,9 @@ public class elevator extends SubsystemBase {
     SmartDashboard.putNumber("Elevator/Position/Position Right", rightSparkMax.get());
     SmartDashboard.putNumber("Elevator/Position/Position Left", leftSparkMax.get());
     SmartDashboard.putNumber("Elevator/Position/Elevator Power", m_PeriodicIO.elevator_power);
+    SmartDashboard.putNumber("Elevator/Left Temp", (leftSparkMax.getMotorTemperature() * 1.8)+32);
+    SmartDashboard.putNumber("Elevator/Right Temp", (rightSparkMax.getMotorTemperature() * 1.8)+32);
+    
     
     outputTelemetry();
     writePeriodicOutputs();

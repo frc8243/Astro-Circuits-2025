@@ -107,7 +107,7 @@ public final class Constants {
     public static final double kP = 0.1;
     public static final double kI = 0;
     public static final double kD = 0;
-    public static final double kG = 0.13;
+    public static final double kG = 0.3;
     public static final double kIZone = 5.0; //TODO: FIND WHAT THIS IS
     public static final double kMaxVelocity = 35; //Inches per Second 25.47
     public static final double kMaxAcceleration = 35; //TODO: FIND WHAT THIS IS
