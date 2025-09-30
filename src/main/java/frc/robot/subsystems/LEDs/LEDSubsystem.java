@@ -38,7 +38,7 @@ public void randomcolor() {
 //This is a test 
 public void setOrange() {
   candle.clearAnimation(0); 
-  candle.setLEDs(120,90,90);
+  candle.setLEDs(200,90,40); // i changed the orange to be more saturated
   candle.configBrightnessScalar(0.1); //this is the brightness
 }
 public void setRed() {
