@@ -161,7 +161,7 @@ public class elevator extends SubsystemBase {
       prevUpdateTime = curTime;
       mCurState = mProfile.calculate(dt, mCurState, mGoalState);
 
-      // Set PID controller to new state
+      // Set PID controller to new state:
       leftPidController.setReference(
           mCurState.position,
           SparkMax.ControlType.kPosition,
