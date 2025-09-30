@@ -35,6 +35,12 @@ public void randomcolor() {
   candle.setLEDs(73,96,123); // I change the blue
   candle.configBrightnessScalar(0.1);
 }
+//This is a test 
+public void setOrange() {
+  candle.clearAnimation(0); 
+  candle.setLEDs(120,90,90);
+  candle.configBrightnessScalar(0.1);
+}
 public void setRed() {
   candle.clearAnimation(0);
   candle.setLEDs(255,0,0);
