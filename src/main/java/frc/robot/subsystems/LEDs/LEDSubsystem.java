@@ -32,7 +32,7 @@ public LEDSubsystem() {
 
 public void randomcolor() {
   candle.clearAnimation(0); // this part causes the led to be set off, removing it's old color
-  candle.setLEDs(73,96,216);
+  candle.setLEDs(73,96,123); // I change the blue
   candle.configBrightnessScalar(0.1);
 }
 public void setRed() {
