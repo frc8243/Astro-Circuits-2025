@@ -39,7 +39,7 @@ public void randomcolor() {
 public void setOrange() {
   candle.clearAnimation(0); 
   candle.setLEDs(120,90,90);
-  candle.configBrightnessScalar(0.1);
+  candle.configBrightnessScalar(0.1); //this is the brightness
 }
 public void setRed() {
   candle.clearAnimation(0);
