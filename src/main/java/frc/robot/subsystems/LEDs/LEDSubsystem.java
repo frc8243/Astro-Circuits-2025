@@ -28,6 +28,13 @@ public LEDSubsystem() {
   candle.configAllSettings(ConfigAll);
   
 }
+// The color below is for testing, remove it whenever you feel like it
+
+public void randomcolor() {
+  candle.clearAnimation(0); // this part causes the led to be set off, removing it's old color
+  candle.setLEDs(73,96,216);
+  candle.configBrightnessScalar(0.1);
+}
 public void setRed() {
   candle.clearAnimation(0);
   candle.setLEDs(255,0,0);

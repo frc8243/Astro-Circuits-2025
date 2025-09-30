@@ -49,7 +49,7 @@ public class elevator extends SubsystemBase {
   private static final SparkMaxConfig sparkMaxConfigRight = new SparkMaxConfig();
 
   private static final boolean leftEncoderInverted = false;
-
+  
   private static final boolean rightEncoderInverted = true;
 
   private static final double leftEncoderPositionFactor = 1.12;
