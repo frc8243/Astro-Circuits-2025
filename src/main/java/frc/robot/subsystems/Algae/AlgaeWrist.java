@@ -73,7 +73,7 @@ public class AlgaeWrist extends SubsystemBase {
           return m_angle;
         }
     }
-
+    
   
     private WristAngle angleEnum = WristAngle.NONE;
   
@@ -112,8 +112,13 @@ public class AlgaeWrist extends SubsystemBase {
       );
     }
     public void manualControl(double velocity){
+      if (limitSwitch.get() && velocity > 0){
+        algaeWristMotor.set(0);
+      }
+      else{
       algaeWristMotor.set(velocity * 0.5);
       SmartDashboard.putNumber("Wrist Manual Speed", velocity);
+      }
     }
 
 

@@ -30,15 +30,15 @@ public LEDSubsystem() {
 }
 // The color below is for testing, remove it whenever you feel like it
 
-public void randomcolor() {
+public void setrandom() {
   candle.clearAnimation(0); // this part causes the led to be set off, removing it's old color
-  candle.setLEDs(73,96,123); // I change the blue
+  candle.setLEDs(237,182,192); // I change the blue
   candle.configBrightnessScalar(0.1);
 }
 //This is a test 
 public void setOrange() {
   candle.clearAnimation(0); 
-  candle.setLEDs(200,90,40); // i changed the orange to be more saturated
+  candle.setLEDs(250,100,10); // i changed the orange to be more saturated
   candle.configBrightnessScalar(0.1); //this is the brightness
 }
 public void setRed() {
