@@ -208,7 +208,7 @@ public class coralHandler extends SubsystemBase {
   public void setOutakeBaseMotor (double speed){
     //if(hasCoral){
       leftSparkMax.set(speed);
-      rightSparkMax.set(-speed/1.1);
+      rightSparkMax.set(speed/1.1);
     //}
 
   }
